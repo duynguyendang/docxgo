@@ -36,18 +36,19 @@ import (
 // IDGenerator generates unique IDs for document elements.
 // It is thread-safe and can be used concurrently.
 type IDGenerator struct {
-	paragraphCounter atomic.Uint64
-	runCounter       atomic.Uint64
-	tableCounter     atomic.Uint64
-	rowCounter       atomic.Uint64
-	cellCounter      atomic.Uint64
-	imageCounter     atomic.Uint64
-	shapeCounter     atomic.Uint64
-	relCounter       atomic.Uint64
-	bookmarkCounter  atomic.Uint64
-	commentCounter   atomic.Uint64
-	footnoteCounter  atomic.Uint64
-	endnoteCounter   atomic.Uint64
+	paragraphCounter     atomic.Uint64
+	runCounter           atomic.Uint64
+	tableCounter         atomic.Uint64
+	rowCounter           atomic.Uint64
+	cellCounter          atomic.Uint64
+	imageCounter         atomic.Uint64
+	shapeCounter         atomic.Uint64
+	relCounter           atomic.Uint64
+	bookmarkCounter      atomic.Uint64
+	trackedChangeCounter atomic.Uint64
+	commentCounter       atomic.Uint64
+	footnoteCounter      atomic.Uint64
+	endnoteCounter       atomic.Uint64
 }
 
 // NewIDGenerator creates a new ID generator.
@@ -115,6 +116,12 @@ func (g *IDGenerator) NextCommentID() string {
 	return fmt.Sprintf("%s%d", constants.IDPrefixComment, id)
 }
 
+// NextTrackedChangeID generates the next tracked change ID.
+func (g *IDGenerator) NextTrackedChangeID() string {
+	id := g.trackedChangeCounter.Add(1)
+	return fmt.Sprintf("%s%d", constants.IDPrefixTrackedChange, id)
+}
+
 // NextFootnoteID generates the next footnote ID.
 func (g *IDGenerator) NextFootnoteID() string {
 	id := g.footnoteCounter.Add(1)
@@ -147,6 +154,7 @@ func (g *IDGenerator) Reset() {
 	g.shapeCounter.Store(0)
 	g.relCounter.Store(0)
 	g.bookmarkCounter.Store(0)
+	g.trackedChangeCounter.Store(0)
 	g.commentCounter.Store(0)
 	g.footnoteCounter.Store(0)
 	g.endnoteCounter.Store(0)

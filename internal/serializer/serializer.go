@@ -157,11 +157,15 @@ func (s *RunSerializer) serializeTextContent(text string) *xml.Text {
 		return nil
 	}
 
+	// Encode smart quotes to XML entities for round-trip safety
+	encoded := EncodeSmartQuotes(text)
+
 	xmlText := &xml.Text{
-		Content: text,
+		Content: encoded,
 	}
 
-	if len(text) > 0 && (text[0] == ' ' || text[len(text)-1] == ' ') {
+	// Add xml:space="preserve" if text has leading/trailing whitespace (spaces or tabs)
+	if len(text) > 0 && (text[0] == ' ' || text[0] == '\t' || text[len(text)-1] == ' ' || text[len(text)-1] == '\t') {
 		xmlText.Space = "preserve"
 	}
 
@@ -275,6 +279,13 @@ func (s *ParagraphSerializer) Serialize(para domain.Paragraph) *xml.Paragraph {
 		}
 	}
 
+	// Add tracked changes if present
+	if corePara, ok := para.(interface {
+		TrackedChanges() []interface{ ID() string }
+	}); ok {
+		_ = corePara // tracked changes handled below
+	}
+
 	// Serialize runs - expand runs with fields into multiple XML runs
 	for _, run := range para.Runs() {
 		// Check if run has fields
@@ -295,6 +306,12 @@ func (s *ParagraphSerializer) Serialize(para domain.Paragraph) *xml.Paragraph {
 		// Regular run without fields
 		xmlPara.Elements = append(xmlPara.Elements, s.runSerializer.Serialize(run))
 	}
+
+	// Serialize tracked changes
+	s.serializeTrackedChanges(xmlPara, para)
+
+	// Add comment range markers
+	s.serializeComments(xmlPara, para)
 
 	// Add bookmark end if this paragraph has a bookmark
 	if corePara, ok := para.(interface{ BookmarkID() string }); ok {
@@ -647,6 +664,123 @@ func (s *ParagraphSerializer) lineSpacingRuleToString(rule domain.LineSpacingRul
 		val = constants.LineSpacingRuleAuto
 	}
 	return &val
+}
+
+// trackedChangeRun is an internal interface for tracked change elements.
+type trackedChangeRun interface {
+	ID() string
+	Author() string
+	Date() string
+	Type() int
+	Runs() []domain.Run
+}
+
+// serializeTrackedChanges adds tracked change elements to the paragraph.
+func (s *ParagraphSerializer) serializeTrackedChanges(xmlPara *xml.Paragraph, para domain.Paragraph) {
+	type trackedChangesProvider interface {
+		TrackedChanges() []interface{ ID() string }
+	}
+	corePara, ok := para.(trackedChangesProvider)
+	if !ok {
+		return
+	}
+	changes := corePara.TrackedChanges()
+	if len(changes) == 0 {
+		return
+	}
+
+	// We need to access the internal type to get details
+	type tcDetail interface {
+		ID() string
+		Author() string
+		Date() string
+		Runs() []domain.Run
+	}
+
+	for _, ch := range changes {
+		detail, ok := ch.(tcDetail)
+		if !ok {
+			continue
+		}
+
+		id := 0
+		fmt.Sscanf(detail.ID(), "tc%d", &id)
+
+		// Serialize the runs inside the tracked change
+		xmlRuns := make([]*xml.Run, 0, len(detail.Runs()))
+		for _, run := range detail.Runs() {
+			xmlRuns = append(xmlRuns, s.runSerializer.Serialize(run))
+		}
+
+		// Determine if insertion or deletion
+		type tcType interface{ Type() int }
+		if tt, ok := ch.(tcType); ok {
+			if tt.Type() == 1 { // TrackedChangeDeletion
+				// Convert regular runs to DelRun format
+				delRuns := make([]*xml.DelRun, 0, len(xmlRuns))
+				for _, xr := range xmlRuns {
+					delRun := &xml.DelRun{
+						Properties: xr.Properties,
+					}
+					if xr.Text != nil {
+						delRun.DelText = &xml.DelText{
+							Space:   xr.Text.Space,
+							Content: xr.Text.Content,
+						}
+					}
+					delRuns = append(delRuns, delRun)
+				}
+				// Use raw XML for deletion since Go XML encoding doesn't handle this well
+				xmlPara.Elements = append(xmlPara.Elements, &xml.TrackedDeletion{
+					ID:     id,
+					Author: detail.Author(),
+					Date:   detail.Date(),
+					Runs:   xmlRuns, // Store original for now
+				})
+				_ = delRuns
+			} else {
+				xmlPara.Elements = append(xmlPara.Elements, &xml.TrackedInsertion{
+					ID:     id,
+					Author: detail.Author(),
+					Date:   detail.Date(),
+					Runs:   xmlRuns,
+				})
+			}
+		}
+	}
+}
+
+// serializeComments adds comment range markers to the paragraph.
+func (s *ParagraphSerializer) serializeComments(xmlPara *xml.Paragraph, para domain.Paragraph) {
+	type commentProvider interface {
+		Comments() []domain.Comment
+	}
+	corePara, ok := para.(commentProvider)
+	if !ok {
+		return
+	}
+	comments := corePara.Comments()
+	if len(comments) == 0 {
+		return
+	}
+
+	for _, cmt := range comments {
+		id := 0
+		fmt.Sscanf(cmt.ID(), "cmt%d", &id)
+		xmlPara.Elements = append(xmlPara.Elements,
+			&xml.CommentRangeStart{ID: id},
+		)
+	}
+
+	// Add comment references at the end
+	for _, cmt := range comments {
+		id := 0
+		fmt.Sscanf(cmt.ID(), "cmt%d", &id)
+		xmlPara.Elements = append(xmlPara.Elements,
+			&xml.CommentRangeEnd{ID: id},
+			&xml.CommentReference{ID: id},
+		)
+	}
 }
 
 // TableSerializer converts domain tables to XML

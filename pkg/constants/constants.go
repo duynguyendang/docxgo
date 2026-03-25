@@ -230,18 +230,19 @@ const (
 
 // Special IDs
 const (
-	IDPrefixParagraph = "para"
-	IDPrefixRun       = "run"
-	IDPrefixTable     = "tbl"
-	IDPrefixRow       = "row"
-	IDPrefixCell      = "cell"
-	IDPrefixImage     = "img"
-	IDPrefixShape     = "shp"
-	IDPrefixRel       = "rId"
-	IDPrefixBookmark  = "bm"
-	IDPrefixComment   = "cmt"
-	IDPrefixFootnote  = "fn"
-	IDPrefixEndnote   = "en"
+	IDPrefixParagraph     = "para"
+	IDPrefixRun           = "run"
+	IDPrefixTable         = "tbl"
+	IDPrefixRow           = "row"
+	IDPrefixCell          = "cell"
+	IDPrefixImage         = "img"
+	IDPrefixShape         = "shp"
+	IDPrefixRel           = "rId"
+	IDPrefixBookmark      = "bm"
+	IDPrefixTrackedChange = "tc"
+	IDPrefixComment       = "cmt"
+	IDPrefixFootnote      = "fn"
+	IDPrefixEndnote       = "en"
 )
 
 // OOXML string values for alignment

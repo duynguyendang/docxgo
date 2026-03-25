@@ -40,45 +40,51 @@ type IDGenerator interface {
 	NextParagraphID() string
 	NextRunID() string
 	NextImageID() string
+	NextTrackedChangeID() string
+	NextCommentID() string
 	GenerateID(prefix string) string
 }
 
 // paragraph implements the domain.Paragraph interface.
 type paragraph struct {
-	id            string
-	runs          []domain.Run
-	fields        []domain.Field
-	images        []domain.Image
-	styleName     string
-	alignment     domain.Alignment
-	indent        domain.Indentation
-	spacingBefore int
-	spacingAfter  int
-	lineSpacing   domain.LineSpacing
-	numbering     *domain.NumberingReference
-	borders       domain.ParagraphBorders
-	idGen         IDGenerator
-	relManager    *manager.RelationshipManager
-	bookmarkID    string // ID for bookmark (if this paragraph needs one for TOC)
-	bookmarkName  string // Name for bookmark (e.g., "_Toc123456")
-	mediaManager  *manager.MediaManager
+	id             string
+	runs           []domain.Run
+	fields         []domain.Field
+	images         []domain.Image
+	trackedChanges []trackedChangeRun
+	comments       []domain.Comment
+	styleName      string
+	alignment      domain.Alignment
+	indent         domain.Indentation
+	spacingBefore  int
+	spacingAfter   int
+	lineSpacing    domain.LineSpacing
+	numbering      *domain.NumberingReference
+	borders        domain.ParagraphBorders
+	idGen          IDGenerator
+	relManager     *manager.RelationshipManager
+	bookmarkID     string // ID for bookmark (if this paragraph needs one for TOC)
+	bookmarkName   string // Name for bookmark (e.g., "_Toc123456")
+	mediaManager   *manager.MediaManager
 }
 
 // NewParagraph creates a new Paragraph.
 func NewParagraph(id string, idGen IDGenerator, relManager *manager.RelationshipManager, mediaManager *manager.MediaManager) domain.Paragraph {
 	return &paragraph{
-		id:            id,
-		runs:          make([]domain.Run, 0, constants.DefaultRunCapacity),
-		fields:        make([]domain.Field, 0, 4),
-		images:        make([]domain.Image, 0, 4),
-		alignment:     domain.AlignmentLeft,
-		indent:        domain.Indentation{},
-		spacingBefore: constants.DefaultParagraphSpacing,
-		spacingAfter:  constants.DefaultParagraphSpacing,
-		lineSpacing:   domain.LineSpacing{Rule: domain.LineSpacingAuto, Value: constants.DefaultLineSpacing},
-		idGen:         idGen,
-		relManager:    relManager,
-		mediaManager:  mediaManager,
+		id:             id,
+		runs:           make([]domain.Run, 0, constants.DefaultRunCapacity),
+		fields:         make([]domain.Field, 0, 4),
+		images:         make([]domain.Image, 0, 4),
+		trackedChanges: make([]trackedChangeRun, 0, 2),
+		comments:       make([]domain.Comment, 0, 2),
+		alignment:      domain.AlignmentLeft,
+		indent:         domain.Indentation{},
+		spacingBefore:  constants.DefaultParagraphSpacing,
+		spacingAfter:   constants.DefaultParagraphSpacing,
+		lineSpacing:    domain.LineSpacing{Rule: domain.LineSpacingAuto, Value: constants.DefaultLineSpacing},
+		idGen:          idGen,
+		relManager:     relManager,
+		mediaManager:   mediaManager,
 	}
 }
 
@@ -551,4 +557,84 @@ func (p *paragraph) InsertRunAt(index int) (domain.Run, error) {
 		p.runs[index] = r
 	}
 	return r, nil
+}
+
+// AddTrackedInsertion wraps a callback in a tracked insertion.
+func (p *paragraph) AddTrackedInsertion(author, date string, fn func(domain.Run)) error {
+	if author == "" {
+		return errors.InvalidArgument("Paragraph.AddTrackedInsertion", "author", author, "author cannot be empty")
+	}
+	if date == "" {
+		date = currentISOTimestamp()
+	}
+	id := p.idGen.NextTrackedChangeID()
+	ins := &trackedInsertion{
+		id:     id,
+		author: author,
+		date:   date,
+	}
+	// Create a run inside the insertion
+	runID := p.idGen.NextRunID()
+	run := NewRun(runID, p.relManager)
+	fn(run)
+	ins.runs = append(ins.runs, run)
+	p.trackedChanges = append(p.trackedChanges, ins)
+	return nil
+}
+
+// AddTrackedDeletion wraps a callback in a tracked deletion.
+func (p *paragraph) AddTrackedDeletion(author, date string, fn func(domain.Run)) error {
+	if author == "" {
+		return errors.InvalidArgument("Paragraph.AddTrackedDeletion", "author", author, "author cannot be empty")
+	}
+	if date == "" {
+		date = currentISOTimestamp()
+	}
+	id := p.idGen.NextTrackedChangeID()
+	del := &trackedDeletion{
+		id:     id,
+		author: author,
+		date:   date,
+	}
+	// Create a run inside the deletion
+	runID := p.idGen.NextRunID()
+	run := NewRun(runID, p.relManager)
+	fn(run)
+	del.runs = append(del.runs, run)
+	p.trackedChanges = append(p.trackedChanges, del)
+	return nil
+}
+
+// AddComment adds a comment to the paragraph.
+func (p *paragraph) AddComment(author, initials, text string) (domain.Comment, error) {
+	if author == "" {
+		return nil, errors.InvalidArgument("Paragraph.AddComment", "author", author, "author cannot be empty")
+	}
+	id := p.idGen.NextCommentID()
+	paraID := p.idGen.GenerateID("")
+	cmt := &docxComment{
+		id:       id,
+		author:   author,
+		date:     currentISOTimestamp(),
+		initials: initials,
+		text:     text,
+		paraID:   paraID,
+	}
+	p.comments = append(p.comments, cmt)
+	return cmt, nil
+}
+
+// Comments returns all comments attached to this paragraph.
+func (p *paragraph) Comments() []domain.Comment {
+	comments := make([]domain.Comment, len(p.comments))
+	copy(comments, p.comments)
+	return comments
+}
+
+// TrackedChanges returns all tracked changes in this paragraph.
+// This is an internal method used by the serializer.
+func (p *paragraph) TrackedChanges() []trackedChangeRun {
+	changes := make([]trackedChangeRun, len(p.trackedChanges))
+	copy(changes, p.trackedChanges)
+	return changes
 }

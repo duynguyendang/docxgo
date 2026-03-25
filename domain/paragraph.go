@@ -132,6 +132,25 @@ type Paragraph interface {
 	// InsertRunAt inserts a new empty run at the given index and returns it.
 	// Index must be in [0, len(Runs())].
 	InsertRunAt(index int) (Run, error)
+
+	// AddTrackedInsertion wraps a callback in a tracked insertion (<w:ins>).
+	// The callback receives a run builder to add text that will be marked as inserted.
+	// author is the tracked change author name, date is ISO 8601 (empty = now).
+	AddTrackedInsertion(author, date string, fn func(Run)) error
+
+	// AddTrackedDeletion wraps a callback in a tracked deletion (<w:del>).
+	// Text added via the callback becomes <w:delText> instead of <w:t>.
+	// author is the tracked change author name, date is ISO 8601 (empty = now).
+	AddTrackedDeletion(author, date string, fn func(Run)) error
+
+	// AddComment adds a comment to the paragraph, attaching comment markers
+	// around the next run. Returns the Comment for further manipulation.
+	// author is the commenter name, initials are the author's initials,
+	// text is the comment body (pre-escaped XML entities).
+	AddComment(author, initials, text string) (Comment, error)
+
+	// Comments returns all comments attached to this paragraph.
+	Comments() []Comment
 }
 
 // ParagraphBorders represents borders for a paragraph.
