@@ -1,6 +1,6 @@
 package template
 
-import "github.com/mmonterroca/docxgo/v2/domain"
+import "github.com/duynguyendang/docxgo/v3/domain"
 
 // ConsolidateRuns merges adjacent runs with identical formatting in a paragraph.
 // This heals the "split placeholder" problem where Word fragments tokens like

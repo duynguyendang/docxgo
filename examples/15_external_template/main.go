@@ -21,8 +21,8 @@ import (
 	"regexp"
 	"time"
 
-	docx "github.com/mmonterroca/docxgo/v2"
-	"github.com/mmonterroca/docxgo/v2/pkg/template"
+	docx "github.com/duynguyendang/docxgo/v3"
+	"github.com/duynguyendang/docxgo/v3/pkg/template"
 )
 
 func main() {

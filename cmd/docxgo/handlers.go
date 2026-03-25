@@ -11,10 +11,10 @@ import (
 	"strings"
 	"sync"
 
-	docx "github.com/mmonterroca/docxgo/v2"
-	"github.com/mmonterroca/docxgo/v2/domain"
-	"github.com/mmonterroca/docxgo/v2/pkg/errors"
-	"github.com/mmonterroca/docxgo/v2/themes"
+	docx "github.com/duynguyendang/docxgo/v3"
+	"github.com/duynguyendang/docxgo/v3/domain"
+	"github.com/duynguyendang/docxgo/v3/pkg/errors"
+	"github.com/duynguyendang/docxgo/v3/themes"
 )
 
 // server holds document sessions for RPC mode.

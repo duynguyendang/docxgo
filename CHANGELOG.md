@@ -1,3 +1,53 @@
+## v3.0.0 — 2026-03-25
+
+### Added
+
+- **PowerPoint (PPTX) Support** (`pptx/`) — new package for creating .pptx files
+  - `NewPresentationBuilder()` — fluent builder API matching DOCX style
+  - Shapes: `ShapeRectangle`, `ShapeEllipse`, `ShapeRoundedRectangle`, `ShapeLine`
+  - Text with formatting: bold, italic, underline, color, font size, font family
+  - Lines with arrowheads via `SetArrowEnd()`, `SetArrowStart()`
+  - Slide backgrounds via `SetBackgroundColor()`
+  - Multiple layouts: 16:9, 16:10, 4:3, WIDE, A4
+  - Measurement helpers: `Inches()`, `Cm()`, `Points()`
+
+- **SVG to PPTX Conversion** — `slide.AddSVG(svgData)`
+  - Supports: rect, circle, ellipse, path, polygon, line, text, groups
+  - Transform support: translate
+  - Named colors: red, blue, green, etc.
+  - ViewBox scaling to fit slide
+  - Custom geometry for complex paths
+
+- **JSON Architecture Diagrams**
+  - Container and component layout from JSON
+  - Flow lines with arrows between entities
+  - Named color mapping (Green-Light, Blue-Outline, etc.)
+
+- **Lines with Arrows**
+  - `slide.AddLine(x1, y1, x2, y2)` — create line between points
+  - `SetArrowEnd()` — add arrowhead at end
+  - `SetArrowStart()` — add arrowhead at start
+  - `SetWidthPt()` — line width in points
+
+### Changed
+
+- Module path changed from `github.com/mmonterroca/docxgo/v2` to `github.com/duynguyendang/docxgo/v3`
+- All import paths updated throughout codebase
+- README.md rewritten with PPTX and SVG documentation
+
+### Examples
+
+- `examples/pptx/` — comprehensive PPTX demo (8 slides)
+  - Slide 1-2: Title and subtitle
+  - Slide 3: Features list
+  - Slide 4: Shape gallery (rectangles and ellipses)
+  - Slide 5: Text formatting (bold, italic, underline)
+  - Slide 6: SVG inline conversion
+  - Slide 7: SVG complex (architecture diagram)
+  - Slide 8: JSON architecture with flow lines
+
+---
+
 ## v2.3.0 — 2026-02-27
 
 ### Added

@@ -30,7 +30,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	xmlstructs "github.com/mmonterroca/docxgo/v2/internal/xml"
+	xmlstructs "github.com/duynguyendang/docxgo/v3/internal/xml"
 )
 
 // Package represents the low-level parts that make up a DOCX archive.

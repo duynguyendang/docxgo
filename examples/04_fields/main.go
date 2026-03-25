@@ -30,8 +30,8 @@ import (
 	"log"
 	"strings"
 
-	docx "github.com/mmonterroca/docxgo/v2"
-	"github.com/mmonterroca/docxgo/v2/domain"
+	docx "github.com/duynguyendang/docxgo/v3"
+	"github.com/duynguyendang/docxgo/v3/domain"
 )
 
 func main() {
@@ -432,7 +432,7 @@ func addHyperlinks(doc domain.Document) error {
 	linkRun.SetColor(docx.Blue)
 	linkRun.SetUnderline(domain.UnderlineSingle)
 
-	hyperlinkField := docx.NewHyperlinkField("https://github.com/mmonterroca/docxgo/v2", "go-docx repository")
+	hyperlinkField := docx.NewHyperlinkField("https://github.com/duynguyendang/docxgo/v3", "go-docx repository")
 	linkRun.AddField(hyperlinkField)
 
 	// Text after link

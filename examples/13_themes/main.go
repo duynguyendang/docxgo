@@ -23,9 +23,9 @@ import (
 	"fmt"
 	"log"
 
-	docx "github.com/mmonterroca/docxgo/v2"
-	"github.com/mmonterroca/docxgo/v2/domain"
-	"github.com/mmonterroca/docxgo/v2/themes"
+	docx "github.com/duynguyendang/docxgo/v3"
+	"github.com/duynguyendang/docxgo/v3/domain"
+	"github.com/duynguyendang/docxgo/v3/themes"
 )
 
 func main() {

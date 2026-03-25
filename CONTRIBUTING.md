@@ -1,8 +1,8 @@
-# Contributing to go-docx
+# Contributing to docxgo
 
-Thank you for your interest in contributing to go-docx! This document provides guidelines and workflow information for contributors.
+Thank you for your interest in contributing to docxgo! This document provides guidelines and workflow information for contributors.
 
-> **Note**: This project was completely rewritten in 2024-2025 with a clean architecture design. All code follows modern Go practices and comprehensive testing standards.
+> **Note**: This project supports both Word (.docx) and PowerPoint (.pptx) file creation.
 
 ## Quick Start for Contributors
 
@@ -33,8 +33,8 @@ Follow these steps to contribute:
 Fork the repository to your GitHub account, then clone your fork:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/go-docx.git
-cd go-docx
+git clone https://github.com/YOUR_USERNAME/docxgo.git
+cd docxgo
 ```
 
 #### 2. Add Upstream Remote
@@ -42,7 +42,7 @@ cd go-docx
 Add the original repository as upstream (if not already added):
 
 ```bash
-git remote add upstream https://github.com/mmonterroca/docxgo.git
+git remote add upstream https://github.com/duynguyendang/docxgo.git
 git remote -v  # Verify remotes
 ```
 

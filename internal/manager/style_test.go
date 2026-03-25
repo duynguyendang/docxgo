@@ -29,7 +29,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/mmonterroca/docxgo/v2/domain"
+	"github.com/duynguyendang/docxgo/v3/domain"
 )
 
 func TestNewStyleManager(t *testing.T) {

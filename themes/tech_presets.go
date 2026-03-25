@@ -24,7 +24,7 @@ SOFTWARE.
 
 package themes
 
-import "github.com/mmonterroca/docxgo/v2/domain"
+import "github.com/duynguyendang/docxgo/v3/domain"
 
 // Tech preset themes for technical presentations and architecture documents.
 var (

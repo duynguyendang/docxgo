@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/mmonterroca/docxgo/v2/internal/core"
+	"github.com/duynguyendang/docxgo/v3/internal/core"
 )
 
 func TestFindPlaceholders_Simple(t *testing.T) {

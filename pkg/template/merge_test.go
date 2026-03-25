@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mmonterroca/docxgo/v2/domain"
-	"github.com/mmonterroca/docxgo/v2/internal/core"
+	"github.com/duynguyendang/docxgo/v3/domain"
+	"github.com/duynguyendang/docxgo/v3/internal/core"
 )
 
 func TestMergeTemplate_SinglePlaceholder(t *testing.T) {

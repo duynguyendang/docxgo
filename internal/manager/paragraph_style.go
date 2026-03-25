@@ -28,9 +28,9 @@ package manager
 import (
 	"sync"
 
-	"github.com/mmonterroca/docxgo/v2/domain"
-	"github.com/mmonterroca/docxgo/v2/pkg/constants"
-	"github.com/mmonterroca/docxgo/v2/pkg/errors"
+	"github.com/duynguyendang/docxgo/v3/domain"
+	"github.com/duynguyendang/docxgo/v3/pkg/constants"
+	"github.com/duynguyendang/docxgo/v3/pkg/errors"
 )
 
 // paragraphStyle implements domain.ParagraphStyle.

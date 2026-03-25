@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"os"
 
-	docx "github.com/mmonterroca/docxgo/v2"
+	docx "github.com/duynguyendang/docxgo/v3"
 )
 
 func main() {

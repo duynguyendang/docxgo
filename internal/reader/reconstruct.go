@@ -27,12 +27,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mmonterroca/docxgo/v2/domain"
-	"github.com/mmonterroca/docxgo/v2/internal/core"
-	xmlstructs "github.com/mmonterroca/docxgo/v2/internal/xml"
-	pkgcolor "github.com/mmonterroca/docxgo/v2/pkg/color"
-	"github.com/mmonterroca/docxgo/v2/pkg/constants"
-	"github.com/mmonterroca/docxgo/v2/pkg/errors"
+	"github.com/duynguyendang/docxgo/v3/domain"
+	"github.com/duynguyendang/docxgo/v3/internal/core"
+	xmlstructs "github.com/duynguyendang/docxgo/v3/internal/xml"
+	pkgcolor "github.com/duynguyendang/docxgo/v3/pkg/color"
+	"github.com/duynguyendang/docxgo/v3/pkg/constants"
+	"github.com/duynguyendang/docxgo/v3/pkg/errors"
 )
 
 const (

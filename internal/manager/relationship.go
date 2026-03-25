@@ -30,9 +30,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mmonterroca/docxgo/v2/internal/xml"
-	"github.com/mmonterroca/docxgo/v2/pkg/constants"
-	"github.com/mmonterroca/docxgo/v2/pkg/errors"
+	"github.com/duynguyendang/docxgo/v3/internal/xml"
+	"github.com/duynguyendang/docxgo/v3/pkg/constants"
+	"github.com/duynguyendang/docxgo/v3/pkg/errors"
 )
 
 // Relationship represents an OOXML relationship.

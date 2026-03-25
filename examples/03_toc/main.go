@@ -5,8 +5,8 @@ import (
 	"log"
 	"strings"
 
-	docx "github.com/mmonterroca/docxgo/v2"
-	"github.com/mmonterroca/docxgo/v2/domain"
+	docx "github.com/duynguyendang/docxgo/v3"
+	"github.com/duynguyendang/docxgo/v3/domain"
 )
 
 func main() {
@@ -323,8 +323,8 @@ func addAppendix(doc domain.Document) error {
 	}
 
 	resources := []string{
-		"API reference: pkg.go.dev/github.com/mmonterroca/docxgo/v2",
-		"Examples: github.com/mmonterroca/docxgo/examples",
+		"API reference: pkg.go.dev/github.com/duynguyendang/docxgo/v3",
+		"Examples: github.com/duynguyendang/docxgo/examples",
 		"Design document: docs/V2_DESIGN.md",
 		"Fields deep dive: examples/04_fields",
 	}

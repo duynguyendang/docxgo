@@ -1,3 +1,3 @@
-module github.com/mmonterroca/docxgo/v2
+module github.com/duynguyendang/docxgo/v3
 
 go 1.23

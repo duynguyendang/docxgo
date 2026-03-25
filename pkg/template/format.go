@@ -1,6 +1,6 @@
 package template
 
-import "github.com/mmonterroca/docxgo/v2/domain"
+import "github.com/duynguyendang/docxgo/v3/domain"
 
 // formatsEqual returns true if two runs have identical visible formatting.
 // It compares all 8 formatting attributes that affect text appearance.

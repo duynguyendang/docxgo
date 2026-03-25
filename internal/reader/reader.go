@@ -33,9 +33,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	xmlstructs "github.com/mmonterroca/docxgo/v2/internal/xml"
-	"github.com/mmonterroca/docxgo/v2/pkg/constants"
-	"github.com/mmonterroca/docxgo/v2/pkg/errors"
+	xmlstructs "github.com/duynguyendang/docxgo/v3/internal/xml"
+	"github.com/duynguyendang/docxgo/v3/pkg/constants"
+	"github.com/duynguyendang/docxgo/v3/pkg/errors"
 )
 
 const (

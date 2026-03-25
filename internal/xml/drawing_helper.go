@@ -24,7 +24,7 @@ SOFTWARE.
 
 package xml
 
-import "github.com/mmonterroca/docxgo/v2/domain"
+import "github.com/duynguyendang/docxgo/v3/domain"
 
 // NewInlineDrawing creates an inline drawing (flows with text).
 func NewInlineDrawing(img domain.Image, drawingID int) *Drawing {

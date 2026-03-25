@@ -1,6 +1,6 @@
 package template
 
-import "github.com/mmonterroca/docxgo/v2/domain"
+import "github.com/duynguyendang/docxgo/v3/domain"
 
 // paragraphContext provides metadata about where a paragraph was found.
 type paragraphContext struct {

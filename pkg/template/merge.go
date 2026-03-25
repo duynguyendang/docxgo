@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mmonterroca/docxgo/v2/domain"
+	"github.com/duynguyendang/docxgo/v3/domain"
 )
 
 // MergeTemplate replaces all placeholders in doc with values from data.

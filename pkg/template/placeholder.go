@@ -3,7 +3,7 @@ package template
 import (
 	"regexp"
 
-	"github.com/mmonterroca/docxgo/v2/domain"
+	"github.com/duynguyendang/docxgo/v3/domain"
 )
 
 // LocationType describes the structural location where a placeholder was found.

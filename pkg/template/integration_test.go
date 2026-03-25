@@ -4,9 +4,9 @@ import (
 	"os"
 	"testing"
 
-	docx "github.com/mmonterroca/docxgo/v2"
-	"github.com/mmonterroca/docxgo/v2/domain"
-	"github.com/mmonterroca/docxgo/v2/internal/core"
+	docx "github.com/duynguyendang/docxgo/v3"
+	"github.com/duynguyendang/docxgo/v3/domain"
+	"github.com/duynguyendang/docxgo/v3/internal/core"
 )
 
 // TestIntegration_CreateTemplateAndMerge tests the full round trip:
