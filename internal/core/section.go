@@ -26,6 +26,7 @@ SOFTWARE.
 package core
 
 import (
+	"strconv"
 	"sync"
 
 	"github.com/duynguyendang/docxgo/v3/domain"
@@ -149,7 +150,7 @@ func (s *docxSection) SetColumns(count int) error {
 			"SetColumns",
 			"columns",
 			count,
-			"must be between 1 and "+string(rune(constants.MaxColumns)),
+			"must be between 1 and "+strconv.Itoa(constants.MaxColumns),
 		)
 	}
 

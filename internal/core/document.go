@@ -73,18 +73,18 @@ type document struct {
 
 	// Preserved parts for round-trip operations (read-modify-write).
 	// When set, these parts are written verbatim to preserve original content.
-	preservedStylesPart      []byte            // Original styles.xml
-	preservedHeaders         map[string][]byte // Original headers (e.g., "header1.xml" -> bytes)
-	preservedFooters         map[string][]byte // Original footers (e.g., "footer1.xml" -> bytes)
-	preservedDocRels         []byte            // Original word/_rels/document.xml.rels
-	preservedContentTypes    []byte            // Original [Content_Types].xml
-	preservedAdditional      map[string][]byte // Additional parts (comments, footnotes, customXml, etc.)
-	preservedThemes          map[string][]byte // Original theme parts
-	preservedFontTable       []byte            // Original fontTable.xml
-	preservedSettings        []byte            // Original settings.xml
-	preservedWebSettings     []byte            // Original webSettings.xml
-	preservedCustomProps     []byte            // Original docProps/custom.xml
-	preservedRootRels        []byte            // Original _rels/.rels
+	preservedStylesPart   []byte            // Original styles.xml
+	preservedHeaders      map[string][]byte // Original headers (e.g., "header1.xml" -> bytes)
+	preservedFooters      map[string][]byte // Original footers (e.g., "footer1.xml" -> bytes)
+	preservedDocRels      []byte            // Original word/_rels/document.xml.rels
+	preservedContentTypes []byte            // Original [Content_Types].xml
+	preservedAdditional   map[string][]byte // Additional parts (comments, footnotes, customXml, etc.)
+	preservedThemes       map[string][]byte // Original theme parts
+	preservedFontTable    []byte            // Original fontTable.xml
+	preservedSettings     []byte            // Original settings.xml
+	preservedWebSettings  []byte            // Original webSettings.xml
+	preservedCustomProps  []byte            // Original docProps/custom.xml
+	preservedRootRels     []byte            // Original _rels/.rels
 }
 
 // NewDocument creates a new Document.
@@ -493,7 +493,7 @@ func (d *document) Validate() error {
 	for i, para := range d.paragraphs {
 		if para == nil {
 			return errors.InvalidState("Document.Validate",
-				"paragraph at index "+string(rune(i))+" is nil")
+				"paragraph at index "+fmt.Sprintf("%d", i)+" is nil")
 		}
 	}
 
@@ -501,7 +501,7 @@ func (d *document) Validate() error {
 	for i, table := range d.tables {
 		if table == nil {
 			return errors.InvalidState("Document.Validate",
-				"table at index "+string(rune(i))+" is nil")
+				"table at index "+fmt.Sprintf("%d", i)+" is nil")
 		}
 	}
 
