@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package constants provides OOXML constants and measurements for go-docx v2.
+// Package constants provides OOXML constants and measurements for go-docx v3.
 package constants
 
 // Measurement conversions

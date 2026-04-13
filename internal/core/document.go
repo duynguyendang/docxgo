@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package core provides concrete implementations of domain interfaces for go-docx v2.
+// Package core provides concrete implementations of domain interfaces for go-docx v3.
 //
 // This package contains the core document model implementations including:
 // - Document: The main document structure

@@ -165,7 +165,7 @@ func main() {
 func createTemplate() string {
 	builder := docx.NewDocumentBuilder(
 		docx.WithTitle("Invoice Template"),
-		docx.WithAuthor("go-docx v2"),
+		docx.WithAuthor("go-docx v3"),
 		docx.WithDefaultFont("Calibri"),
 		docx.WithDefaultFontSize(22),
 		docx.WithPageSize(docx.A4),

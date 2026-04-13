@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package pptx provides PowerPoint (.pptx) file creation for go-docx v2.
+// Package pptx provides PowerPoint (.pptx) file creation for go-docx v3.
 //
 // This package provides a clean, builder-pattern API for creating PowerPoint
 // presentations following the Office Open XML (OOXML) specification.

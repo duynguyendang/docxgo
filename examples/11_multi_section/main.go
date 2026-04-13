@@ -87,7 +87,7 @@ func main() {
 	intro, _ := doc.AddParagraph()
 	intro.SetStyle(domain.StyleIDNormal)
 	introRun, _ := intro.AddRun()
-	introRun.AddText("This report highlights performance across business units and showcases the new multi-section support in go-docx v2.")
+	introRun.AddText("This report highlights performance across business units and showcases the new multi-section support in go-docx v3.")
 
 	summaryHeading, _ := doc.AddParagraph()
 	summaryHeading.SetStyle(domain.StyleIDHeading1)

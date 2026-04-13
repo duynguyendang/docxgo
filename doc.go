@@ -29,7 +29,7 @@ Microsoft Word (.docx) documents in Go.
 
 # Overview
 
-This is version 2 of go-docx, featuring a complete rewrite with:
+This is version 3 of go-docx, featuring a complete rewrite with:
   - Clean architecture with domain-driven design
   - Comprehensive OOXML (Office Open XML) support
   - Fluent builder API for easy document creation
@@ -72,7 +72,7 @@ The builder API provides a more convenient way to create documents:
 	builder := docx.NewDocumentBuilder()
 
 	builder.AddParagraph().
-	    Text("Welcome to go-docx v2!").
+	    Text("Welcome to go-docx v3!").
 	    Bold().
 	    FontSize(16).
 	    Color(docx.Blue).
@@ -308,7 +308,7 @@ This library generates Office Open XML (OOXML) documents compatible with:
 
 # Version
 
-Current version: 2.3.0
+Current version: 3.0.0
 
 This is a major rewrite of the original go-docx library with breaking changes.
 See the migration guide in docs/V2_DESIGN.md for details.

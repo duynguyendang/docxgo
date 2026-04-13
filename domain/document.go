@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package domain defines the core domain interfaces for go-docx v2.
+// Package domain defines the core domain interfaces for go-docx v3.
 //
 // This package provides a clean, testable API for working with Word documents.
 // All functionality is exposed through interfaces to promote loose coupling

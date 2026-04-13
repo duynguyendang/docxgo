@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package manager provides internal management services for go-docx v2.
+// Package manager provides internal management services for go-docx v3.
 package manager
 
 import (

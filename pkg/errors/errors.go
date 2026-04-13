@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package errors provides structured error types for go-docx v2.
+// Package errors provides structured error types for go-docx v3.
 package errors
 
 import (
@@ -42,7 +42,7 @@ const (
 	ErrCodeUnsupported  = "UNSUPPORTED"
 )
 
-// DocxError represents a structured error in go-docx v2.
+// DocxError represents a structured error in go-docx v3.
 type DocxError struct {
 	Code    string                 // Error code (e.g., "VALIDATION_ERROR")
 	Op      string                 // Operation that failed (e.g., "Document.AddParagraph")

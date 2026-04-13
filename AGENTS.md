@@ -4,7 +4,7 @@
 
 **docxgo** is a pure Go library for creating Microsoft Office documents (`.docx` and `.pptx`). No external dependencies, no CGo.
 
-- **Version**: 2.3.0
+- **Version**: 3.0.0
 - **Go**: 1.23+
 - **License**: MIT
 

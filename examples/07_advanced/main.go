@@ -68,7 +68,7 @@ func setupHeader(header domain.Header) {
 	para.SetAlignment(domain.AlignmentRight)
 
 	run, _ := para.AddRun()
-	run.AddText("go-docx v2 • Advanced Features Demo")
+	run.AddText("go-docx v3 • Advanced Features Demo")
 	run.SetSize(20)                                       // 10pt in half-points
 	run.SetColor(domain.Color{R: 0x44, G: 0x72, B: 0xC4}) // Blue
 }
@@ -123,7 +123,7 @@ func addCoverPage(doc domain.Document) {
 	author, _ := doc.AddParagraph()
 	author.SetAlignment(domain.AlignmentCenter)
 	authorRun, _ := author.AddRun()
-	authorRun.AddText("Created with go-docx v2")
+	authorRun.AddText("Created with go-docx v3")
 	authorRun.SetItalic(true)
 
 	doc.AddParagraph()
@@ -175,7 +175,7 @@ func addIntroduction(doc domain.Document) {
 	intro, _ := doc.AddParagraph()
 	intro.SetStyle(domain.StyleIDNormal)
 	introRun, _ := intro.AddRun()
-	introRun.AddText("This document demonstrates the advanced features available in go-docx v2. It showcases sections, headers, footers, fields, and comprehensive style management.")
+	introRun.AddText("This document demonstrates the advanced features available in go-docx v3. It showcases sections, headers, footers, fields, and comprehensive style management.")
 
 	doc.AddParagraph()
 
@@ -204,7 +204,7 @@ func addFeatures(doc domain.Document) {
 	intro, _ := doc.AddParagraph()
 	intro.SetStyle(domain.StyleIDNormal)
 	introRun, _ := intro.AddRun()
-	introRun.AddText("go-docx v2 Phase 6 introduces several powerful capabilities:")
+	introRun.AddText("go-docx v3 introduces several powerful capabilities:")
 
 	doc.AddParagraph()
 
@@ -419,7 +419,7 @@ func addConclusion(doc domain.Document) {
 	summary, _ := doc.AddParagraph()
 	summary.SetStyle(domain.StyleIDNormal)
 	summaryRun, _ := summary.AddRun()
-	summaryRun.AddText("This document demonstrates the complete feature set of go-docx v2 Phase 6. All advanced capabilities work together seamlessly to create professional documents programmatically.")
+	summaryRun.AddText("This document demonstrates the complete feature set of go-docx v3. All advanced capabilities work together seamlessly to create professional documents programmatically.")
 
 	doc.AddParagraph()
 
@@ -452,6 +452,6 @@ func addConclusion(doc domain.Document) {
 	final.SetStyle(domain.StyleIDIntenseQuote)
 	final.SetAlignment(domain.AlignmentCenter)
 	finalRun, _ := final.AddRun()
-	finalRun.AddText("Thank you for using go-docx v2!")
+	finalRun.AddText("Thank you for using go-docx v3!")
 	finalRun.SetBold(true)
 }

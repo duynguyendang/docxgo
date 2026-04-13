@@ -1308,7 +1308,7 @@ func (s *DocumentSerializer) SerializeCoreProperties(meta *domain.Metadata) *xml
 func (s *DocumentSerializer) SerializeAppProperties(doc domain.Document) *xml.AppProperties {
 	return &xml.AppProperties{
 		Xmlns:       constants.NamespaceExtendedProperties,
-		Application: "go-docx/v2",
+		Application: "go-docx/v3",
 		DocSecurity: 0,
 		Lines:       0,
 		Paragraphs:  len(doc.Paragraphs()),
