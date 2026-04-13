@@ -397,8 +397,11 @@ func (d *document) WriteTo(w io.Writer) (int64, error) {
 	xmlDoc := ser.SerializeDocument(d)
 	headers, footers := ser.SerializeSectionParts(d)
 
+	// Wrap writer with byte counter
+	cw := &countingWriter{w: w}
+
 	// Create ZIP writer
-	zipWriter := writer.NewZipWriter(w)
+	zipWriter := writer.NewZipWriter(cw)
 	defer func() {
 		if err := zipWriter.Close(); err != nil {
 			// Log error but don't override return value as document may have been partially written
@@ -450,10 +453,19 @@ func (d *document) WriteTo(w io.Writer) (int64, error) {
 		return 0, errors.WrapWithCode(err, errors.ErrCodeIO, "Document.WriteTo")
 	}
 
-	// Get byte count from writer if available
-	// For now, return 0 as ZipWriter doesn't track total bytes
-	// This could be enhanced by wrapping the writer with a counting writer
-	return 0, nil
+	return cw.n, nil
+}
+
+// countingWriter wraps an io.Writer to track total bytes written.
+type countingWriter struct {
+	w io.Writer
+	n int64
+}
+
+func (cw *countingWriter) Write(p []byte) (int, error) {
+	n, err := cw.w.Write(p)
+	cw.n += int64(n)
+	return n, err
 }
 
 // SaveAs saves the document to the specified file path.

@@ -817,9 +817,15 @@ func (s *TableSerializer) serializeTableProperties(table domain.Table) *xml.Tabl
 
 	// Width
 	width := table.Width()
+	widthType := s.widthTypeToString(width.Type)
+	widthValue := width.Value
+	if widthType == "auto" && widthValue == 0 {
+		widthType = "pct"
+		widthValue = 5000
+	}
 	props.Width = &xml.TableWidth{
-		Type: s.widthTypeToString(width.Type),
-		W:    width.Value,
+		Type: widthType,
+		W:    widthValue,
 	}
 
 	// Default look hints are expressed purely via w:val for strict OOXML compliance.
@@ -848,47 +854,12 @@ func (s *TableSerializer) serializeGrid(table domain.Table) *xml.TableGrid {
 		Cols: make([]*xml.GridCol, colCount),
 	}
 
-	// Try to derive column widths from the first row's cell widths.
-	// If cells have explicit widths, use them for the grid columns;
-	// otherwise fall back to nil (omitted) so Word auto-calculates.
-	if table.RowCount() > 0 {
-		if firstRow, err := table.Row(0); err == nil {
-			cells := firstRow.Cells()
-			colIdx := 0
-			for _, cell := range cells {
-				if cell.IsHorizontallyMergedContinuation() {
-					continue
-				}
-				w := cell.Width()
-				span := cell.GridSpan()
-				if span < 1 {
-					span = 1
-				}
-				// Distribute the cell width evenly across spanned columns.
-				perCol := 0
-				if w > 0 && span > 0 {
-					perCol = w / span
-				}
-				for j := 0; j < span && colIdx < colCount; j++ {
-					if perCol > 0 {
-						grid.Cols[colIdx] = &xml.GridCol{W: intPtr(perCol)}
-					} else {
-						grid.Cols[colIdx] = &xml.GridCol{}
-					}
-					colIdx++
-				}
-			}
-			// Fill remaining columns (safety).
-			for ; colIdx < colCount; colIdx++ {
-				grid.Cols[colIdx] = &xml.GridCol{}
-			}
-			return grid
-		}
-	}
+	// Available content width: 6.5 inches = 9360 twips (Letter with 1" margins)
+	// Divide evenly among columns
+	colWidth := 9360 / colCount
 
-	// Fallback: no rows or error – omit widths so Word auto-calculates.
 	for i := 0; i < colCount; i++ {
-		grid.Cols[i] = &xml.GridCol{}
+		grid.Cols[i] = &xml.GridCol{W: &colWidth}
 	}
 
 	return grid
@@ -957,16 +928,12 @@ func (s *TableSerializer) serializeCell(cell domain.TableCell) *xml.TableCell {
 func (s *TableSerializer) serializeCellProperties(cell domain.TableCell) *xml.TableCellProperties {
 	props := &xml.TableCellProperties{}
 
-	// Width (Word expects tcW even for auto width)
-	widthType := constants.WidthTypeAuto
-	widthValue := 0
+	// Width - only set when cell has explicit width
 	if cell.Width() > 0 {
-		widthType = constants.WidthTypeDXA
-		widthValue = cell.Width()
-	}
-	props.Width = &xml.TableWidth{
-		Type: widthType,
-		W:    widthValue,
+		props.Width = &xml.TableWidth{
+			Type: constants.WidthTypeDXA,
+			W:    cell.Width(),
+		}
 	}
 
 	// GridSpan (horizontal merge)

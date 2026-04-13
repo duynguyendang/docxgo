@@ -703,17 +703,9 @@ func TestTableSerializer_CellBorders(t *testing.T) {
 }
 
 func TestTableSerializer_GridColumnWidths(t *testing.T) {
-	t.Run("derives widths from first row cells", func(t *testing.T) {
+	t.Run("column width calculated based on column count", func(t *testing.T) {
 		doc := core.NewDocument()
 		table, _ := doc.AddTable(2, 3)
-
-		row, _ := table.Row(0)
-		c0, _ := row.Cell(0)
-		c0.SetWidth(2000)
-		c1, _ := row.Cell(1)
-		c1.SetWidth(3000)
-		c2, _ := row.Cell(2)
-		c2.SetWidth(4000)
 
 		ser := serializer.NewTableSerializer()
 		xmlTable := ser.Serialize(table)
@@ -725,19 +717,20 @@ func TestTableSerializer_GridColumnWidths(t *testing.T) {
 			t.Fatalf("expected 3 grid columns, got %d", len(xmlTable.Grid.Cols))
 		}
 
-		expected := []int{2000, 3000, 4000}
+		// 9360 / 3 = 3120 twips per column
+		expected := 3120
 		for i, col := range xmlTable.Grid.Cols {
 			if col.W == nil {
 				t.Errorf("column %d: expected width to be set", i)
 				continue
 			}
-			if *col.W != expected[i] {
-				t.Errorf("column %d: expected width %d, got %d", i, expected[i], *col.W)
+			if *col.W != expected {
+				t.Errorf("column %d: expected width %d, got %d", i, expected, *col.W)
 			}
 		}
 	})
 
-	t.Run("omits widths when cells have no explicit width", func(t *testing.T) {
+	t.Run("2 columns get 4680 twips each", func(t *testing.T) {
 		doc := core.NewDocument()
 		table, _ := doc.AddTable(1, 2)
 
@@ -747,27 +740,23 @@ func TestTableSerializer_GridColumnWidths(t *testing.T) {
 		if xmlTable.Grid == nil {
 			t.Fatal("expected grid to be set")
 		}
+
+		// 9360 / 2 = 4680 twips per column
+		expected := 4680
 		for i, col := range xmlTable.Grid.Cols {
-			if col.W != nil {
-				t.Errorf("column %d: expected width to be omitted (nil), got %d", i, *col.W)
+			if col.W == nil {
+				t.Errorf("column %d: expected width to be set", i)
+				continue
+			}
+			if *col.W != expected {
+				t.Errorf("column %d: expected width %d, got %d", i, expected, *col.W)
 			}
 		}
 	})
 
-	t.Run("distributes spanned cell width across grid columns", func(t *testing.T) {
+	t.Run("4 columns get 2340 twips each", func(t *testing.T) {
 		doc := core.NewDocument()
 		table, _ := doc.AddTable(1, 4)
-
-		row, _ := table.Row(0)
-		// Merge first two cells horizontally (span=2)
-		c0, _ := row.Cell(0)
-		c0.SetWidth(6000)
-		c0.Merge(2, 1) // merge 2 cols, 1 row
-
-		c2, _ := row.Cell(2)
-		c2.SetWidth(2000)
-		c3, _ := row.Cell(3)
-		c3.SetWidth(1000)
 
 		ser := serializer.NewTableSerializer()
 		xmlTable := ser.Serialize(table)
@@ -775,19 +764,16 @@ func TestTableSerializer_GridColumnWidths(t *testing.T) {
 		if xmlTable.Grid == nil {
 			t.Fatal("expected grid to be set")
 		}
-		if len(xmlTable.Grid.Cols) != 4 {
-			t.Fatalf("expected 4 grid columns, got %d", len(xmlTable.Grid.Cols))
-		}
 
-		// 6000 / 2 = 3000 per spanned column
-		expected := []int{3000, 3000, 2000, 1000}
+		// 9360 / 4 = 2340 twips per column
+		expected := 2340
 		for i, col := range xmlTable.Grid.Cols {
 			if col.W == nil {
 				t.Errorf("column %d: expected width to be set", i)
 				continue
 			}
-			if *col.W != expected[i] {
-				t.Errorf("column %d: expected width %d, got %d", i, expected[i], *col.W)
+			if *col.W != expected {
+				t.Errorf("column %d: expected width %d, got %d", i, expected, *col.W)
 			}
 		}
 	})

@@ -47,7 +47,6 @@ type IDGenerator interface {
 
 // paragraph implements the domain.Paragraph interface.
 type paragraph struct {
-	id             string
 	runs           []domain.Run
 	fields         []domain.Field
 	images         []domain.Image
@@ -69,9 +68,8 @@ type paragraph struct {
 }
 
 // NewParagraph creates a new Paragraph.
-func NewParagraph(id string, idGen IDGenerator, relManager *manager.RelationshipManager, mediaManager *manager.MediaManager) domain.Paragraph {
+func NewParagraph(_ string, idGen IDGenerator, relManager *manager.RelationshipManager, mediaManager *manager.MediaManager) domain.Paragraph {
 	return &paragraph{
-		id:             id,
 		runs:           make([]domain.Run, 0, constants.DefaultRunCapacity),
 		fields:         make([]domain.Field, 0, 4),
 		images:         make([]domain.Image, 0, 4),
