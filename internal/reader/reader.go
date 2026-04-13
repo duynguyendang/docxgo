@@ -140,7 +140,7 @@ func loadFromZip(zr *zip.Reader) (*Package, error) {
 
 		data, err := readZipFile(file)
 		if err != nil {
-			return nil, errors.WrapWithContext(err, opLoadFromZip, map[string]interface{}{"part": file.Name})
+			return nil, errors.WrapWithContext(err, opLoadFromZip, map[string]any{"part": file.Name})
 		}
 
 		// Preserve the original name as recorded in the archive for future writes.

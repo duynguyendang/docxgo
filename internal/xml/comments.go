@@ -9,7 +9,7 @@ type Comment struct {
 	Author   string   `xml:"w:author,attr"`
 	Date     string   `xml:"w:date,attr"`
 	Initials string   `xml:"w:initials,attr,omitempty"`
-	Body     []interface{}
+	Body     []any
 }
 
 // CommentRangeStart represents w:commentRangeStart element.

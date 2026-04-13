@@ -27,6 +27,7 @@ package core
 
 import (
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/duynguyendang/docxgo/v3/domain"
@@ -274,24 +275,17 @@ func (p *paragraph) AttachHydratedImageToRun(r domain.Run, img domain.Image, med
 
 // Images returns all images in this paragraph.
 func (p *paragraph) Images() []domain.Image {
-	images := make([]domain.Image, len(p.images))
-	copy(images, p.images)
-	return images
+	return slices.Clone(p.images)
 }
 
 // Runs returns all runs in this paragraph.
 func (p *paragraph) Runs() []domain.Run {
-	// Return a copy to prevent external modification
-	runs := make([]domain.Run, len(p.runs))
-	copy(runs, p.runs)
-	return runs
+	return slices.Clone(p.runs)
 }
 
 // Fields returns all fields in this paragraph.
 func (p *paragraph) Fields() []domain.Field {
-	fields := make([]domain.Field, len(p.fields))
-	copy(fields, p.fields)
-	return fields
+	return slices.Clone(p.fields)
 }
 
 // Text returns the plain text content of the paragraph.
@@ -304,13 +298,36 @@ func (p *paragraph) Text() string {
 }
 
 // Style returns the style applied to this paragraph.
-// Note: Currently only returns the style name, not a full Style object.
-// For now, use SetStyle() to apply styles and track the name yourself if needed.
+// If no style has been set, returns nil.
+// To retrieve the full Style object (with formatting details),
+// use the document's StyleManager: doc.StyleManager().GetStyle(p.styleName).
 func (p *paragraph) Style() domain.Style {
-	// Style retrieval from the style manager is not yet implemented.
-	// Return nil for now - users should track the applied style name themselves.
-	return nil
+	if p.styleName == "" {
+		return nil
+	}
+	return domain.Style(&resolvedStyleRef{name: p.styleName})
 }
+
+// resolvedStyleRef is a lightweight Style wrapper that defers resolution
+// to the document's StyleManager. It carries only the style name so that
+// Paragraph.Style() can return a non-nil value without requiring access
+// to the StyleManager at call time.
+type resolvedStyleRef struct {
+	name string
+}
+
+func (r *resolvedStyleRef) ID() string              { return r.name }
+func (r *resolvedStyleRef) Name() string            { return r.name }
+func (r *resolvedStyleRef) Type() domain.StyleType  { return domain.StyleTypeParagraph }
+func (r *resolvedStyleRef) BasedOn() string         { return "" }
+func (r *resolvedStyleRef) SetBasedOn(string) error { return nil }
+func (r *resolvedStyleRef) Next() string            { return "" }
+func (r *resolvedStyleRef) SetNext(string) error    { return nil }
+func (r *resolvedStyleRef) Font() domain.Font       { return domain.Font{} }
+func (r *resolvedStyleRef) SetFont(domain.Font) error { return nil }
+func (r *resolvedStyleRef) IsDefault() bool         { return false }
+func (r *resolvedStyleRef) SetDefault(bool) error   { return nil }
+func (r *resolvedStyleRef) IsCustom() bool          { return false }
 
 // SetStyle applies a named style to the paragraph.
 func (p *paragraph) SetStyle(styleName string) error {
@@ -624,9 +641,7 @@ func (p *paragraph) AddComment(author, initials, text string) (domain.Comment, e
 
 // Comments returns all comments attached to this paragraph.
 func (p *paragraph) Comments() []domain.Comment {
-	comments := make([]domain.Comment, len(p.comments))
-	copy(comments, p.comments)
-	return comments
+	return slices.Clone(p.comments)
 }
 
 // TrackedChanges returns all tracked changes in this paragraph.

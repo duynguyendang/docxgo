@@ -246,7 +246,7 @@ func applyParagraphStyle(para domain.Paragraph, props *Element) error {
 
 	if styleID, ok := getAttr(pStyleElem, "val"); ok && styleID != "" {
 		if err := para.SetStyle(styleID); err != nil {
-			return errors.WrapWithContext(err, "applyParagraphStyle", map[string]interface{}{"styleID": styleID})
+			return errors.WrapWithContext(err, "applyParagraphStyle", map[string]any{"styleID": styleID})
 		}
 	}
 
@@ -262,7 +262,7 @@ func applyParagraphSpacing(para domain.Paragraph, props *Element) error {
 	if val, ok := getAttr(spacingElem, "before"); ok && val != "" {
 		twips, err := strconv.Atoi(val)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyParagraphSpacing, map[string]interface{}{"attr": "before", "value": val})
+			return errors.WrapWithContext(err, opApplyParagraphSpacing, map[string]any{"attr": "before", "value": val})
 		}
 		if err := para.SetSpacingBefore(twips); err != nil {
 			return err
@@ -272,7 +272,7 @@ func applyParagraphSpacing(para domain.Paragraph, props *Element) error {
 	if val, ok := getAttr(spacingElem, "after"); ok && val != "" {
 		twips, err := strconv.Atoi(val)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyParagraphSpacing, map[string]interface{}{"attr": "after", "value": val})
+			return errors.WrapWithContext(err, opApplyParagraphSpacing, map[string]any{"attr": "after", "value": val})
 		}
 		if err := para.SetSpacingAfter(twips); err != nil {
 			return err
@@ -286,7 +286,7 @@ func applyParagraphSpacing(para domain.Paragraph, props *Element) error {
 	if val, ok := getAttr(spacingElem, "line"); ok && val != "" {
 		twips, err := strconv.Atoi(val)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyParagraphSpacing, map[string]interface{}{"attr": "line", "value": val})
+			return errors.WrapWithContext(err, opApplyParagraphSpacing, map[string]any{"attr": "line", "value": val})
 		}
 		lineSpacing.Value = twips
 		valueChanged = true
@@ -335,7 +335,7 @@ func applyParagraphIndentation(para domain.Paragraph, props *Element) error {
 	if val, ok := getAttr(ind, "left"); ok && val != "" {
 		twips, err := strconv.Atoi(val)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]interface{}{"attr": "left", "value": val})
+			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]any{"attr": "left", "value": val})
 		}
 		current.Left = twips
 		changed = true
@@ -344,7 +344,7 @@ func applyParagraphIndentation(para domain.Paragraph, props *Element) error {
 	if val, ok := getAttr(ind, "right"); ok && val != "" {
 		twips, err := strconv.Atoi(val)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]interface{}{"attr": "right", "value": val})
+			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]any{"attr": "right", "value": val})
 		}
 		current.Right = twips
 		changed = true
@@ -353,7 +353,7 @@ func applyParagraphIndentation(para domain.Paragraph, props *Element) error {
 	if val, ok := getAttr(ind, "firstLine"); ok && val != "" {
 		twips, err := strconv.Atoi(val)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]interface{}{"attr": "firstLine", "value": val})
+			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]any{"attr": "firstLine", "value": val})
 		}
 		current.FirstLine = twips
 		changed = true
@@ -362,7 +362,7 @@ func applyParagraphIndentation(para domain.Paragraph, props *Element) error {
 	if val, ok := getAttr(ind, "hanging"); ok && val != "" {
 		twips, err := strconv.Atoi(val)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]interface{}{"attr": "hanging", "value": val})
+			return errors.WrapWithContext(err, opApplyParagraphIndent, map[string]any{"attr": "hanging", "value": val})
 		}
 		current.Hanging = twips
 		changed = true
@@ -395,7 +395,7 @@ func applyParagraphNumbering(para domain.Paragraph, props *Element) error {
 		if val, ok := getAttr(numID, "val"); ok && val != "" {
 			id, err := strconv.Atoi(val)
 			if err != nil {
-				return errors.WrapWithContext(err, opApplyParagraphNumbering, map[string]interface{}{"attr": "numId", "value": val})
+				return errors.WrapWithContext(err, opApplyParagraphNumbering, map[string]any{"attr": "numId", "value": val})
 			}
 			ref.ID = id
 			foundID = true
@@ -411,7 +411,7 @@ func applyParagraphNumbering(para domain.Paragraph, props *Element) error {
 		if val, ok := getAttr(ilvl, "val"); ok && val != "" {
 			lvl, err := strconv.Atoi(val)
 			if err != nil {
-				return errors.WrapWithContext(err, opApplyParagraphNumbering, map[string]interface{}{"attr": "ilvl", "value": val})
+				return errors.WrapWithContext(err, opApplyParagraphNumbering, map[string]any{"attr": "ilvl", "value": val})
 			}
 			ref.Level = lvl
 		}
@@ -574,7 +574,7 @@ func applyRunProperties(run domain.Run, props *Element) error {
 		if val, ok := getAttr(colorElem, "val"); ok && val != "" && !strings.EqualFold(val, "auto") {
 			clr, err := pkgcolor.FromHex(val)
 			if err != nil {
-				return errors.WrapWithContext(err, opApplyRunProperties, map[string]interface{}{"attr": "color", "value": val})
+				return errors.WrapWithContext(err, opApplyRunProperties, map[string]any{"attr": "color", "value": val})
 			}
 			if err := run.SetColor(clr); err != nil {
 				return errors.Wrap(err, opApplyRunProperties)
@@ -598,7 +598,7 @@ func applyRunProperties(run domain.Run, props *Element) error {
 	if sizeVal != "" {
 		halfPoints, err := strconv.Atoi(sizeVal)
 		if err != nil {
-			return errors.WrapWithContext(err, opApplyRunProperties, map[string]interface{}{"attr": "sz", "value": sizeVal})
+			return errors.WrapWithContext(err, opApplyRunProperties, map[string]any{"attr": "sz", "value": sizeVal})
 		}
 		if err := run.SetSize(halfPoints); err != nil {
 			return errors.Wrap(err, opApplyRunProperties)

@@ -44,7 +44,7 @@ func TestDocxError_Error(t *testing.T) {
 				Op:      "Document.AddParagraph",
 				Message: "invalid paragraph",
 				Err:     errors.New("underlying error"),
-				Context: map[string]interface{}{"field": "value"},
+				Context: map[string]any{"field": "value"},
 			},
 			contains: []string{"operation=Document.AddParagraph", "code=VALIDATION_ERROR", "invalid paragraph", "cause=underlying error"},
 		},
@@ -278,7 +278,7 @@ func TestWrapWithCode(t *testing.T) {
 func TestWrapWithContext(t *testing.T) {
 	t.Run("wrap with context", func(t *testing.T) {
 		underlying := errors.New("underlying")
-		ctx := map[string]interface{}{"key": "value"}
+		ctx := map[string]any{"key": "value"}
 		err := WrapWithContext(underlying, "TestOp", ctx)
 
 		docxErr, ok := err.(*DocxError)
@@ -295,7 +295,7 @@ func TestWrapWithContext(t *testing.T) {
 	})
 
 	t.Run("wrap nil with context", func(t *testing.T) {
-		ctx := map[string]interface{}{"key": "value"}
+		ctx := map[string]any{"key": "value"}
 		err := WrapWithContext(nil, "TestOp", ctx)
 		if err != nil {
 			t.Errorf("WrapWithContext(nil) = %v; want nil", err)

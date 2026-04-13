@@ -49,7 +49,7 @@ import "encoding/xml"
 type Paragraph struct {
 	XMLName    xml.Name             `xml:"w:p"`
 	Properties *ParagraphProperties `xml:"w:pPr,omitempty"`
-	Elements   []interface{}        `xml:",any"`
+	Elements   []any        `xml:",any"`
 }
 
 // BookmarkStart represents w:bookmarkStart element.

@@ -43,6 +43,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/duynguyendang/docxgo/v3/domain"
@@ -131,6 +132,53 @@ func (d *document) ensureActiveSection() (*docxSection, error) {
 	}
 
 	return d.activeSection, nil
+}
+
+// AddHeading adds a heading paragraph with the specified text and level.
+// Level 0 uses the Title style; levels 1-9 use Heading1-Heading9.
+// Levels 1-4 are bold; levels 5-9 are not.
+// Returns an error if level is outside the range 0-9.
+func (d *document) AddHeading(text string, level int) (domain.Paragraph, error) {
+	if level < 0 || level > 9 {
+		return nil, errors.InvalidArgument("Document.AddHeading", "level", level,
+			"level must be between 0 and 9")
+	}
+
+	para, err := d.AddParagraph()
+	if err != nil {
+		return nil, err
+	}
+
+	// Set the style based on level
+	var styleID string
+	if level == 0 {
+		styleID = domain.StyleIDTitle
+	} else {
+		styleID = fmt.Sprintf("Heading%d", level)
+	}
+
+	if err := para.SetStyle(styleID); err != nil {
+		return nil, err
+	}
+
+	// Add a run with the text
+	run, err := para.AddRun()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := run.SetText(text); err != nil {
+		return nil, err
+	}
+
+	// Set bold for levels 1-4
+	if level >= 1 && level <= 4 {
+		if err := run.SetBold(true); err != nil {
+			return nil, err
+		}
+	}
+
+	return para, nil
 }
 
 // AddParagraph adds a new paragraph to the document.
@@ -234,31 +282,22 @@ func (d *document) DefaultSection() (domain.Section, error) {
 
 // Paragraphs returns all paragraphs in the document.
 func (d *document) Paragraphs() []domain.Paragraph {
-	// Return a copy to prevent external modification
-	paras := make([]domain.Paragraph, len(d.paragraphs))
-	copy(paras, d.paragraphs)
-	return paras
+	return slices.Clone(d.paragraphs)
 }
 
 // Tables returns all tables in the document.
 func (d *document) Tables() []domain.Table {
-	tables := make([]domain.Table, len(d.tables))
-	copy(tables, d.tables)
-	return tables
+	return slices.Clone(d.tables)
 }
 
 // Sections returns all sections in the document.
 func (d *document) Sections() []domain.Section {
-	sections := make([]domain.Section, len(d.sections))
-	copy(sections, d.sections)
-	return sections
+	return slices.Clone(d.sections)
 }
 
 // Blocks returns all top-level document content in insertion order.
 func (d *document) Blocks() []domain.Block {
-	blocks := make([]domain.Block, len(d.blocks))
-	copy(blocks, d.blocks)
-	return blocks
+	return slices.Clone(d.blocks)
 }
 
 // generateHeadingBookmarks generates bookmarks for all headings in the document.
@@ -402,12 +441,6 @@ func (d *document) WriteTo(w io.Writer) (int64, error) {
 
 	// Create ZIP writer
 	zipWriter := writer.NewZipWriter(cw)
-	defer func() {
-		if err := zipWriter.Close(); err != nil {
-			// Log error but don't override return value as document may have been partially written
-			_ = err
-		}
-	}()
 
 	// Build relationships from relationship manager
 	rels := d.relManager.ToXML()
@@ -451,6 +484,13 @@ func (d *document) WriteTo(w io.Writer) (int64, error) {
 	// Use preserved styles and parts if available (from reading an existing document)
 	if err := zipWriter.WriteDocument(xmlDoc, rels, coreProps, appProps, styles, mediaFiles, headers, footers, numberingPart, d.preservedStylesPart, writerPreserved); err != nil {
 		return 0, errors.WrapWithCode(err, errors.ErrCodeIO, "Document.WriteTo")
+	}
+
+	// Close the ZIP writer and propagate any error.
+	// Previously this was deferred with the error silently ignored, which could
+	// result in corrupted .docx files being reported as successfully written.
+	if closeErr := zipWriter.Close(); closeErr != nil {
+		return cw.n, errors.WrapWithCode(closeErr, errors.ErrCodeIO, "Document.WriteTo")
 	}
 
 	return cw.n, nil

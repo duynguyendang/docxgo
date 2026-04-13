@@ -1,6 +1,7 @@
 package core
 
 import (
+	"slices"
 	"time"
 
 	"github.com/duynguyendang/docxgo/v3/domain"
@@ -18,9 +19,7 @@ func (t *trackedInsertion) ID() string     { return t.id }
 func (t *trackedInsertion) Author() string { return t.author }
 func (t *trackedInsertion) Date() string   { return t.date }
 func (t *trackedInsertion) Runs() []domain.Run {
-	runs := make([]domain.Run, len(t.runs))
-	copy(runs, t.runs)
-	return runs
+	return slices.Clone(t.runs)
 }
 func (t *trackedInsertion) Type() domain.TrackedChangeType {
 	return domain.TrackedChangeInsertion
@@ -38,9 +37,7 @@ func (t *trackedDeletion) ID() string     { return t.id }
 func (t *trackedDeletion) Author() string { return t.author }
 func (t *trackedDeletion) Date() string   { return t.date }
 func (t *trackedDeletion) Runs() []domain.Run {
-	runs := make([]domain.Run, len(t.runs))
-	copy(runs, t.runs)
-	return runs
+	return slices.Clone(t.runs)
 }
 func (t *trackedDeletion) Type() domain.TrackedChangeType {
 	return domain.TrackedChangeDeletion

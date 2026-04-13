@@ -36,7 +36,7 @@ func TestErrorResponse(t *testing.T) {
 func TestResponseJSON(t *testing.T) {
 	resp := Response{
 		ID:     1,
-		Result: map[string]interface{}{"ok": true},
+		Result: map[string]any{"ok": true},
 	}
 	data, err := json.Marshal(resp)
 	if err != nil {
@@ -149,7 +149,7 @@ func TestParseMargins(t *testing.T) {
 	}
 
 	// object form
-	custom := parseMargins(map[string]interface{}{
+	custom := parseMargins(map[string]any{
 		"top": float64(500), "bottom": float64(600),
 		"left": float64(700), "right": float64(800),
 	})
@@ -160,14 +160,14 @@ func TestParseMargins(t *testing.T) {
 
 // ─── Server / dispatch tests ─────────────────────────────────────────────────
 
-func makeRequest(id interface{}, method string, params interface{}) *Request {
+func makeRequest(id any, method string, params any) *Request {
 	raw, _ := json.Marshal(params)
 	return &Request{ID: id, Method: method, Params: raw}
 }
 
 func TestDispatch_UnknownMethod(t *testing.T) {
 	s := newServer()
-	resp := s.dispatch(makeRequest(1, "document.unknown", map[string]interface{}{}))
+	resp := s.dispatch(makeRequest(1, "document.unknown", map[string]any{}))
 	if resp.Error == nil {
 		t.Fatal("expected error for unknown method")
 	}
@@ -178,12 +178,12 @@ func TestDispatch_UnknownMethod(t *testing.T) {
 
 func TestHandleCreate_BasicBuffer(t *testing.T) {
 	s := newServer()
-	params := map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{
+	params := map[string]any{
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Hello World", "bold": true},
+				"runs": []any{
+					map[string]any{"text": "Hello World", "bold": true},
 				},
 			},
 		},
@@ -193,7 +193,7 @@ func TestHandleCreate_BasicBuffer(t *testing.T) {
 	if resp.Error != nil {
 		t.Fatalf("unexpected error: %+v", resp.Error)
 	}
-	result, ok := resp.Result.(map[string]interface{})
+	result, ok := resp.Result.(map[string]any)
 	if !ok {
 		t.Fatalf("expected map result, got %T", resp.Result)
 	}
@@ -218,18 +218,18 @@ func TestHandleCreate_BasicBuffer(t *testing.T) {
 
 func TestHandleCreate_WithOptions(t *testing.T) {
 	s := newServer()
-	params := map[string]interface{}{
-		"options": map[string]interface{}{
+	params := map[string]any{
+		"options": map[string]any{
 			"title":    "Test Doc",
 			"author":   "Test Author",
 			"pageSize": "A4",
 			"margins":  "narrow",
 		},
-		"content": []interface{}{
-			map[string]interface{}{
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Content"},
+				"runs": []any{
+					map[string]any{"text": "Content"},
 				},
 			},
 		},
@@ -243,30 +243,30 @@ func TestHandleCreate_WithOptions(t *testing.T) {
 
 func TestHandleCreate_WithTable(t *testing.T) {
 	s := newServer()
-	params := map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{
+	params := map[string]any{
+		"content": []any{
+			map[string]any{
 				"type":  "table",
 				"style": "TableGrid",
-				"rows": []interface{}{
-					map[string]interface{}{
-						"cells": []interface{}{
-							map[string]interface{}{
-								"paragraphs": []interface{}{
-									map[string]interface{}{
+				"rows": []any{
+					map[string]any{
+						"cells": []any{
+							map[string]any{
+								"paragraphs": []any{
+									map[string]any{
 										"type": "paragraph",
-										"runs": []interface{}{
-											map[string]interface{}{"text": "Cell 1"},
+										"runs": []any{
+											map[string]any{"text": "Cell 1"},
 										},
 									},
 								},
 							},
-							map[string]interface{}{
-								"paragraphs": []interface{}{
-									map[string]interface{}{
+							map[string]any{
+								"paragraphs": []any{
+									map[string]any{
 										"type": "paragraph",
-										"runs": []interface{}{
-											map[string]interface{}{"text": "Cell 2"},
+										"runs": []any{
+											map[string]any{"text": "Cell 2"},
 										},
 									},
 								},
@@ -289,12 +289,12 @@ func TestHandleCreate_SaveToFile(t *testing.T) {
 	outPath := dir + "/test.docx"
 
 	s := newServer()
-	params := map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{
+	params := map[string]any{
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "File output test"},
+				"runs": []any{
+					map[string]any{"text": "File output test"},
 				},
 			},
 		},
@@ -312,19 +312,19 @@ func TestHandleCreate_SaveToFile(t *testing.T) {
 
 func TestHandleCreate_PageBreak(t *testing.T) {
 	s := newServer()
-	params := map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{
+	params := map[string]any{
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Page 1"},
+				"runs": []any{
+					map[string]any{"text": "Page 1"},
 				},
 			},
-			map[string]interface{}{"type": "pageBreak"},
-			map[string]interface{}{
+			map[string]any{"type": "pageBreak"},
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Page 2"},
+				"runs": []any{
+					map[string]any{"text": "Page 2"},
 				},
 			},
 		},
@@ -347,9 +347,9 @@ func TestHandleCreate_InvalidParams(t *testing.T) {
 
 func TestHandleCreate_UnknownContentType(t *testing.T) {
 	s := newServer()
-	params := map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{"type": "unknownType"},
+	params := map[string]any{
+		"content": []any{
+			map[string]any{"type": "unknownType"},
 		},
 		"output": "buffer",
 	}
@@ -361,7 +361,7 @@ func TestHandleCreate_UnknownContentType(t *testing.T) {
 
 func TestHandleOpen_InvalidParams(t *testing.T) {
 	s := newServer()
-	resp := s.dispatch(makeRequest(7, "document.open", map[string]interface{}{}))
+	resp := s.dispatch(makeRequest(7, "document.open", map[string]any{}))
 	if resp.Error == nil {
 		t.Fatal("expected error when no filePath or base64 provided")
 	}
@@ -369,7 +369,7 @@ func TestHandleOpen_InvalidParams(t *testing.T) {
 
 func TestHandleOpen_NonexistentFile(t *testing.T) {
 	s := newServer()
-	resp := s.dispatch(makeRequest(8, "document.open", map[string]interface{}{
+	resp := s.dispatch(makeRequest(8, "document.open", map[string]any{
 		"filePath": "/nonexistent/path/file.docx",
 	}))
 	if resp.Error == nil {
@@ -379,7 +379,7 @@ func TestHandleOpen_NonexistentFile(t *testing.T) {
 
 func TestHandleSave_NotFound(t *testing.T) {
 	s := newServer()
-	resp := s.dispatch(makeRequest(9, "document.save", map[string]interface{}{
+	resp := s.dispatch(makeRequest(9, "document.save", map[string]any{
 		"documentId": "no-such-doc",
 		"output":     "buffer",
 	}))
@@ -394,12 +394,12 @@ func TestHandleSave_NotFound(t *testing.T) {
 func TestHandleValidate(t *testing.T) {
 	s := newServer()
 	// Create a document first
-	createResp := s.dispatch(makeRequest(10, "document.create", map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{
+	createResp := s.dispatch(makeRequest(10, "document.create", map[string]any{
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Hello"},
+				"runs": []any{
+					map[string]any{"text": "Hello"},
 				},
 			},
 		},
@@ -408,17 +408,17 @@ func TestHandleValidate(t *testing.T) {
 	if createResp.Error != nil {
 		t.Fatalf("create failed: %+v", createResp.Error)
 	}
-	result := createResp.Result.(map[string]interface{})
+	result := createResp.Result.(map[string]any)
 	docID := result["documentId"].(string)
 
 	// Validate it
-	validateResp := s.dispatch(makeRequest(11, "document.validate", map[string]interface{}{
+	validateResp := s.dispatch(makeRequest(11, "document.validate", map[string]any{
 		"documentId": docID,
 	}))
 	if validateResp.Error != nil {
 		t.Fatalf("validate failed: %+v", validateResp.Error)
 	}
-	vResult := validateResp.Result.(map[string]interface{})
+	vResult := validateResp.Result.(map[string]any)
 	if valid, ok := vResult["valid"].(bool); !ok || !valid {
 		t.Errorf("expected valid=true, got %v", vResult)
 	}
@@ -426,13 +426,13 @@ func TestHandleValidate(t *testing.T) {
 
 func TestHandleInspect(t *testing.T) {
 	s := newServer()
-	createResp := s.dispatch(makeRequest(12, "document.create", map[string]interface{}{
-		"options": map[string]interface{}{"title": "My Title"},
-		"content": []interface{}{
-			map[string]interface{}{
+	createResp := s.dispatch(makeRequest(12, "document.create", map[string]any{
+		"options": map[string]any{"title": "My Title"},
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Inspect me"},
+				"runs": []any{
+					map[string]any{"text": "Inspect me"},
 				},
 			},
 		},
@@ -441,16 +441,16 @@ func TestHandleInspect(t *testing.T) {
 	if createResp.Error != nil {
 		t.Fatalf("create failed: %+v", createResp.Error)
 	}
-	result := createResp.Result.(map[string]interface{})
+	result := createResp.Result.(map[string]any)
 	docID := result["documentId"].(string)
 
-	inspectResp := s.dispatch(makeRequest(13, "document.inspect", map[string]interface{}{
+	inspectResp := s.dispatch(makeRequest(13, "document.inspect", map[string]any{
 		"documentId": docID,
 	}))
 	if inspectResp.Error != nil {
 		t.Fatalf("inspect failed: %+v", inspectResp.Error)
 	}
-	iResult := inspectResp.Result.(map[string]interface{})
+	iResult := inspectResp.Result.(map[string]any)
 	if _, ok := iResult["paragraphCount"]; !ok {
 		t.Error("expected paragraphCount in inspect result")
 	}
@@ -461,17 +461,17 @@ func TestHandleInspect(t *testing.T) {
 
 func TestHandleSetMetadata(t *testing.T) {
 	s := newServer()
-	createResp := s.dispatch(makeRequest(14, "document.create", map[string]interface{}{
-		"content": []interface{}{},
+	createResp := s.dispatch(makeRequest(14, "document.create", map[string]any{
+		"content": []any{},
 		"output":  "buffer",
 	}))
 	if createResp.Error != nil {
 		t.Fatalf("create failed: %+v", createResp.Error)
 	}
-	result := createResp.Result.(map[string]interface{})
+	result := createResp.Result.(map[string]any)
 	docID := result["documentId"].(string)
 
-	setResp := s.dispatch(makeRequest(15, "document.setMetadata", map[string]interface{}{
+	setResp := s.dispatch(makeRequest(15, "document.setMetadata", map[string]any{
 		"documentId": docID,
 		"title":      "Updated Title",
 		"creator":    "Test Author",
@@ -483,17 +483,17 @@ func TestHandleSetMetadata(t *testing.T) {
 
 func TestHandleSetBackgroundColor(t *testing.T) {
 	s := newServer()
-	createResp := s.dispatch(makeRequest(16, "document.create", map[string]interface{}{
-		"content": []interface{}{},
+	createResp := s.dispatch(makeRequest(16, "document.create", map[string]any{
+		"content": []any{},
 		"output":  "buffer",
 	}))
 	if createResp.Error != nil {
 		t.Fatalf("create failed: %+v", createResp.Error)
 	}
-	result := createResp.Result.(map[string]interface{})
+	result := createResp.Result.(map[string]any)
 	docID := result["documentId"].(string)
 
-	bgResp := s.dispatch(makeRequest(17, "document.setBackgroundColor", map[string]interface{}{
+	bgResp := s.dispatch(makeRequest(17, "document.setBackgroundColor", map[string]any{
 		"documentId": docID,
 		"color":      "#E0F0FF",
 	}))
@@ -504,17 +504,17 @@ func TestHandleSetBackgroundColor(t *testing.T) {
 
 func TestHandleSetBackgroundColor_InvalidColor(t *testing.T) {
 	s := newServer()
-	createResp := s.dispatch(makeRequest(18, "document.create", map[string]interface{}{
-		"content": []interface{}{},
+	createResp := s.dispatch(makeRequest(18, "document.create", map[string]any{
+		"content": []any{},
 		"output":  "buffer",
 	}))
 	if createResp.Error != nil {
 		t.Fatalf("create failed: %+v", createResp.Error)
 	}
-	result := createResp.Result.(map[string]interface{})
+	result := createResp.Result.(map[string]any)
 	docID := result["documentId"].(string)
 
-	bgResp := s.dispatch(makeRequest(19, "document.setBackgroundColor", map[string]interface{}{
+	bgResp := s.dispatch(makeRequest(19, "document.setBackgroundColor", map[string]any{
 		"documentId": docID,
 		"color":      "not-a-color",
 	}))
@@ -532,27 +532,27 @@ func TestIntegration_CreateOpenInspectSave(t *testing.T) {
 	s := newServer()
 
 	// 1. Create document and save to file
-	createResp := s.dispatch(makeRequest("i1", "document.create", map[string]interface{}{
-		"options": map[string]interface{}{
+	createResp := s.dispatch(makeRequest("i1", "document.create", map[string]any{
+		"options": map[string]any{
 			"title":   "Integration Test",
 			"author":  "Tester",
 			"pageSize": "A4",
 		},
-		"content": []interface{}{
-			map[string]interface{}{
+		"content": []any{
+			map[string]any{
 				"type":      "paragraph",
 				"style":     "Heading1",
 				"alignment": "center",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Integration Heading"},
+				"runs": []any{
+					map[string]any{"text": "Integration Heading"},
 				},
 			},
-			map[string]interface{}{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "Bold text", "bold": true},
-					map[string]interface{}{"text": " and ", "bold": false},
-					map[string]interface{}{"text": "italic text", "italic": true},
+				"runs": []any{
+					map[string]any{"text": "Bold text", "bold": true},
+					map[string]any{"text": " and ", "bold": false},
+					map[string]any{"text": "italic text", "italic": true},
 				},
 			},
 		},
@@ -564,23 +564,23 @@ func TestIntegration_CreateOpenInspectSave(t *testing.T) {
 	}
 
 	// 2. Open the saved file
-	openResp := s.dispatch(makeRequest("i2", "document.open", map[string]interface{}{
+	openResp := s.dispatch(makeRequest("i2", "document.open", map[string]any{
 		"filePath": docPath,
 	}))
 	if openResp.Error != nil {
 		t.Fatalf("open failed: %+v", openResp.Error)
 	}
-	openResult := openResp.Result.(map[string]interface{})
+	openResult := openResp.Result.(map[string]any)
 	docID := openResult["documentId"].(string)
 
 	// 3. Inspect
-	inspectResp := s.dispatch(makeRequest("i3", "document.inspect", map[string]interface{}{
+	inspectResp := s.dispatch(makeRequest("i3", "document.inspect", map[string]any{
 		"documentId": docID,
 	}))
 	if inspectResp.Error != nil {
 		t.Fatalf("inspect failed: %+v", inspectResp.Error)
 	}
-	iResult := inspectResp.Result.(map[string]interface{})
+	iResult := inspectResp.Result.(map[string]any)
 	count, ok1 := iResult["paragraphCount"].(int)
 	count64, ok2 := iResult["paragraphCount"].(float64)
 	if ok2 {
@@ -592,14 +592,14 @@ func TestIntegration_CreateOpenInspectSave(t *testing.T) {
 	}
 
 	// 4. Save as buffer
-	saveResp := s.dispatch(makeRequest("i4", "document.save", map[string]interface{}{
+	saveResp := s.dispatch(makeRequest("i4", "document.save", map[string]any{
 		"documentId": docID,
 		"output":     "buffer",
 	}))
 	if saveResp.Error != nil {
 		t.Fatalf("save failed: %+v", saveResp.Error)
 	}
-	saveResult := saveResp.Result.(map[string]interface{})
+	saveResult := saveResp.Result.(map[string]any)
 	if _, ok := saveResult["data"]; !ok {
 		t.Error("expected data in save result")
 	}
@@ -669,12 +669,12 @@ func TestHandleOpen_Base64(t *testing.T) {
 	s := newServer()
 
 	// First create a document as a buffer
-	createResp := s.dispatch(makeRequest("b1", "document.create", map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{
+	createResp := s.dispatch(makeRequest("b1", "document.create", map[string]any{
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "base64 open test"},
+				"runs": []any{
+					map[string]any{"text": "base64 open test"},
 				},
 			},
 		},
@@ -683,16 +683,16 @@ func TestHandleOpen_Base64(t *testing.T) {
 	if createResp.Error != nil {
 		t.Fatalf("create failed: %+v", createResp.Error)
 	}
-	b64 := createResp.Result.(map[string]interface{})["data"].(string)
+	b64 := createResp.Result.(map[string]any)["data"].(string)
 
 	// Open it via base64
-	openResp := s.dispatch(makeRequest("b2", "document.open", map[string]interface{}{
+	openResp := s.dispatch(makeRequest("b2", "document.open", map[string]any{
 		"base64": b64,
 	}))
 	if openResp.Error != nil {
 		t.Fatalf("open via base64 failed: %+v", openResp.Error)
 	}
-	if _, ok := openResp.Result.(map[string]interface{})["documentId"]; !ok {
+	if _, ok := openResp.Result.(map[string]any)["documentId"]; !ok {
 		t.Error("expected documentId in open result")
 	}
 }
@@ -701,17 +701,17 @@ func TestHandleOpen_Base64(t *testing.T) {
 
 func TestHandleClose(t *testing.T) {
 	s := newServer()
-	createResp := s.dispatch(makeRequest("c1", "document.create", map[string]interface{}{
-		"content": []interface{}{},
+	createResp := s.dispatch(makeRequest("c1", "document.create", map[string]any{
+		"content": []any{},
 		"output":  "buffer",
 	}))
 	if createResp.Error != nil {
 		t.Fatalf("create failed: %+v", createResp.Error)
 	}
-	docID := createResp.Result.(map[string]interface{})["documentId"].(string)
+	docID := createResp.Result.(map[string]any)["documentId"].(string)
 
 	// Close the document
-	closeResp := s.dispatch(makeRequest("c2", "document.close", map[string]interface{}{
+	closeResp := s.dispatch(makeRequest("c2", "document.close", map[string]any{
 		"documentId": docID,
 	}))
 	if closeResp.Error != nil {
@@ -719,7 +719,7 @@ func TestHandleClose(t *testing.T) {
 	}
 
 	// Trying to inspect the closed document should fail
-	inspectResp := s.dispatch(makeRequest("c3", "document.inspect", map[string]interface{}{
+	inspectResp := s.dispatch(makeRequest("c3", "document.inspect", map[string]any{
 		"documentId": docID,
 	}))
 	if inspectResp.Error == nil {
@@ -732,7 +732,7 @@ func TestHandleClose(t *testing.T) {
 
 func TestHandleClose_NotFound(t *testing.T) {
 	s := newServer()
-	resp := s.dispatch(makeRequest("c4", "document.close", map[string]interface{}{
+	resp := s.dispatch(makeRequest("c4", "document.close", map[string]any{
 		"documentId": "nonexistent",
 	}))
 	if resp.Error == nil {
@@ -747,12 +747,12 @@ func TestHandleClose_NotFound(t *testing.T) {
 
 func TestHandleCreate_InvalidOutput(t *testing.T) {
 	s := newServer()
-	params := map[string]interface{}{
-		"content": []interface{}{
-			map[string]interface{}{
+	params := map[string]any{
+		"content": []any{
+			map[string]any{
 				"type": "paragraph",
-				"runs": []interface{}{
-					map[string]interface{}{"text": "test"},
+				"runs": []any{
+					map[string]any{"text": "test"},
 				},
 			},
 		},
@@ -771,11 +771,11 @@ func TestHandleCreate_InvalidOutput(t *testing.T) {
 
 func TestHandleCreate_UnknownTheme(t *testing.T) {
 	s := newServer()
-	params := map[string]interface{}{
-		"options": map[string]interface{}{
+	params := map[string]any{
+		"options": map[string]any{
 			"theme": "NonExistentTheme",
 		},
-		"content": []interface{}{},
+		"content": []any{},
 		"output":  "buffer",
 	}
 	resp := s.dispatch(makeRequest("t1", "document.create", params))

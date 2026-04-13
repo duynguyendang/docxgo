@@ -252,6 +252,31 @@ func (b *DocumentBuilder) AddParagraph() *ParagraphBuilder {
 	}
 }
 
+// AddHeading adds a heading paragraph with the specified text and level
+// and returns a ParagraphBuilder for further styling.
+// Level 0 uses the Title style; levels 1-9 use Heading1-Heading9.
+//
+// Example:
+//
+//	builder.AddHeading("Chapter 1", 1).
+//	    Alignment(docx.AlignmentCenter).
+//	    End()
+func (b *DocumentBuilder) AddHeading(text string, level int) *ParagraphBuilder {
+	para, err := b.doc.AddHeading(text, level)
+	if err != nil {
+		b.errors = append(b.errors, err)
+		return &ParagraphBuilder{
+			parent: b,
+			err:    err,
+		}
+	}
+
+	return &ParagraphBuilder{
+		para:   para,
+		parent: b,
+	}
+}
+
 // AddTable adds a new table with the specified dimensions and returns a TableBuilder.
 //
 // Example:
@@ -595,6 +620,20 @@ func (tb *TableBuilder) Style(style domain.TableStyle) *TableBuilder {
 	}
 
 	if err := tb.table.SetStyle(style); err != nil {
+		tb.err = err
+		tb.parent.errors = append(tb.parent.errors, err)
+	}
+
+	return tb
+}
+
+// AddColumn adds a new column (one cell to each existing row).
+func (tb *TableBuilder) AddColumn() *TableBuilder {
+	if tb.err != nil {
+		return tb
+	}
+
+	if err := tb.table.AddColumn(); err != nil {
 		tb.err = err
 		tb.parent.errors = append(tb.parent.errors, err)
 	}

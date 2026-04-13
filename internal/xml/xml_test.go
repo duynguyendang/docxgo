@@ -167,7 +167,7 @@ func TestHeader_Marshal(t *testing.T) {
 
 	// Add a simple paragraph
 	para := &Paragraph{
-		Elements: []interface{}{
+		Elements: []any{
 			&Run{
 				Text: &Text{
 					Space:   "preserve",
@@ -201,7 +201,7 @@ func TestFooter_Marshal(t *testing.T) {
 
 	// Add a simple paragraph
 	para := &Paragraph{
-		Elements: []interface{}{
+		Elements: []any{
 			&Run{
 				Text: &Text{
 					Space:   "preserve",

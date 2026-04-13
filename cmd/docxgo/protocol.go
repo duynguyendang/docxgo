@@ -5,15 +5,15 @@ import "encoding/json"
 
 // Request represents a JSON-RPC request.
 type Request struct {
-	ID     interface{}     `json:"id"`
+	ID     any     `json:"id"`
 	Method string          `json:"method"`
 	Params json.RawMessage `json:"params,omitempty"`
 }
 
 // Response represents a JSON-RPC response.
 type Response struct {
-	ID     interface{} `json:"id"`
-	Result interface{} `json:"result,omitempty"`
+	ID     any `json:"id"`
+	Result any `json:"result,omitempty"`
 	Error  *RPCError   `json:"error,omitempty"`
 }
 
@@ -25,7 +25,7 @@ type RPCError struct {
 }
 
 // errorResponse is a convenience helper that builds an error Response.
-func errorResponse(id interface{}, code, message, operation string) Response {
+func errorResponse(id any, code, message, operation string) Response {
 	return Response{
 		ID: id,
 		Error: &RPCError{

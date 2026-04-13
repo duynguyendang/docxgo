@@ -27,6 +27,9 @@ SOFTWARE.
 package core
 
 import (
+	"slices"
+	"strings"
+
 	"github.com/duynguyendang/docxgo/v3/domain"
 	"github.com/duynguyendang/docxgo/v3/internal/manager"
 	"github.com/duynguyendang/docxgo/v3/pkg/constants"
@@ -36,7 +39,7 @@ import (
 // run implements the domain.Run interface.
 type run struct {
 	id         string
-	text       string
+	text       strings.Builder
 	image      domain.Image
 	font       domain.Font
 	color      domain.Color
@@ -66,12 +69,13 @@ func NewRun(id string, relManager *manager.RelationshipManager) domain.Run {
 
 // Text returns the text content of this run.
 func (r *run) Text() string {
-	return r.text
+	return r.text.String()
 }
 
 // SetText sets the text content of this run.
 func (r *run) SetText(text string) error {
-	r.text = text
+	r.text.Reset()
+	r.text.WriteString(text)
 	return nil
 }
 
@@ -193,7 +197,7 @@ func (r *run) SetHighlight(color domain.HighlightColor) error {
 
 // AddText is a convenience method that appends text to the run.
 func (r *run) AddText(text string) error {
-	r.text += text
+	r.text.WriteString(text)
 	return nil
 }
 
@@ -216,10 +220,7 @@ func (r *run) Breaks() []domain.BreakType {
 	if r.breaks == nil {
 		return nil
 	}
-	// Return a defensive copy
-	result := make([]domain.BreakType, len(r.breaks))
-	copy(result, r.breaks)
-	return result
+	return slices.Clone(r.breaks)
 }
 
 // AddField adds a field to this run (e.g., page number, TOC, hyperlink).
@@ -280,8 +281,5 @@ func (r *run) Fields() []domain.Field {
 	if r.fields == nil {
 		return nil
 	}
-	// Return a defensive copy
-	result := make([]domain.Field, len(r.fields))
-	copy(result, r.fields)
-	return result
+	return slices.Clone(r.fields)
 }

@@ -26,6 +26,7 @@ SOFTWARE.
 package core
 
 import (
+	"slices"
 	"strconv"
 	"sync"
 
@@ -258,10 +259,7 @@ func (h *docxHeader) Paragraphs() []domain.Paragraph {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
-	// Return defensive copy
-	result := make([]domain.Paragraph, len(h.paragraphs))
-	copy(result, h.paragraphs)
-	return result
+	return slices.Clone(h.paragraphs)
 }
 
 // RelationshipID returns the relationship ID associated with this header.
@@ -322,10 +320,7 @@ func (f *docxFooter) Paragraphs() []domain.Paragraph {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	// Return defensive copy
-	result := make([]domain.Paragraph, len(f.paragraphs))
-	copy(result, f.paragraphs)
-	return result
+	return slices.Clone(f.paragraphs)
 }
 
 // RelationshipID returns the relationship ID associated with this footer.

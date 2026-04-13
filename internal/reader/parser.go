@@ -159,7 +159,7 @@ func ParsePackage(pkg *Package) (*ParsedPackage, error) {
 	return parsed, nil
 }
 
-func decodeXML(data []byte, dest interface{}, part string) error {
+func decodeXML(data []byte, dest any, part string) error {
 	if len(data) == 0 {
 		return errors.Errorf(errors.ErrCodeInvalidState, opParsePackage, "%s is empty", part)
 	}
@@ -179,6 +179,6 @@ func xmlPartError(part string, err error) error {
 		Code:    errors.ErrCodeXML,
 		Op:      opParsePackage,
 		Err:     err,
-		Context: map[string]interface{}{"part": part},
+		Context: map[string]any{"part": part},
 	}
 }

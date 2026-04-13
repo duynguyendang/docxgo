@@ -25,7 +25,7 @@ type Run struct {
 	Properties *RunProperties `xml:"w:rPr,omitempty"`
 
 	// Content can be text, fields, tabs, breaks, or drawings
-	// Using interface{} with custom marshaling for flexibility
+	// Using any with custom marshaling for flexibility
 	Text    *Text     `xml:"w:t,omitempty"`
 	Tab     *struct{} `xml:"w:tab,omitempty"`
 	Break   *Break    `xml:"w:br,omitempty"`

@@ -25,6 +25,7 @@ SOFTWARE.
 package core
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	_ "image/gif"  // Register GIF format decoder
@@ -309,15 +310,11 @@ func formatFromContentType(contentType string) domain.ImageFormat {
 
 // getImageDimensions reads image dimensions from image data.
 func getImageDimensions(data []byte) (domain.ImageSize, error) {
-	// Decode image to get dimensions
-	img, format, err := image.DecodeConfig(strings.NewReader(string(data)))
+	// Decode image config to get dimensions.
+	// Use bytes.NewReader to avoid unnecessary string(data) copy.
+	img, format, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil {
-		// If decode fails, try reading as binary
-		reader := strings.NewReader(string(data))
-		img, format, err = image.DecodeConfig(reader)
-		if err != nil {
-			return domain.ImageSize{}, errors.Wrap(err, "getImageDimensions")
-		}
+		return domain.ImageSize{}, errors.Wrap(err, "getImageDimensions")
 	}
 
 	_ = format // format string is for logging if needed

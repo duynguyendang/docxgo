@@ -529,7 +529,7 @@ func (p *Presentation) writeSlide(zw *zip.Writer, slide *Slide, num int) error {
 	return writeXMLToZip(zw, fmt.Sprintf("ppt/slides/slide%d.xml", num), slideXML)
 }
 
-func writeXMLToZip(zw *zip.Writer, name string, v interface{}) error {
+func writeXMLToZip(zw *zip.Writer, name string, v any) error {
 	f, err := zw.Create(name)
 	if err != nil {
 		return fmt.Errorf("pptx: failed to create %s: %w", name, err)

@@ -48,7 +48,7 @@ type DocxError struct {
 	Op      string                 // Operation that failed (e.g., "Document.AddParagraph")
 	Err     error                  // Underlying error
 	Message string                 // Human-readable message
-	Context map[string]interface{} // Additional context
+	Context map[string]any // Additional context
 }
 
 // Error implements the error interface.
@@ -99,7 +99,7 @@ func (e *DocxError) Is(target error) bool {
 // ValidationError represents a validation error.
 type ValidationError struct {
 	Field      string      // Field name that failed validation
-	Value      interface{} // Invalid value
+	Value      any // Invalid value
 	Constraint string      // Constraint that was violated
 	Message    string      // Human-readable message
 }
@@ -153,7 +153,7 @@ func (b *BuilderError) Set(err error) {
 // Helper functions for creating common errors
 
 // Errorf creates a new DocxError with formatted message.
-func Errorf(code, op, format string, args ...interface{}) error {
+func Errorf(code, op, format string, args ...any) error {
 	return &DocxError{
 		Code:    code,
 		Op:      op,
@@ -186,7 +186,7 @@ func WrapWithCode(err error, code, op string) error {
 }
 
 // WrapWithContext wraps an error with operation and additional context.
-func WrapWithContext(err error, op string, context map[string]interface{}) error {
+func WrapWithContext(err error, op string, context map[string]any) error {
 	if err == nil {
 		return nil
 	}
@@ -217,7 +217,7 @@ func InvalidState(op, message string) error {
 }
 
 // Validation creates a validation error.
-func Validation(field string, value interface{}, constraint, message string) error {
+func Validation(field string, value any, constraint, message string) error {
 	return &ValidationError{
 		Field:      field,
 		Value:      value,
@@ -228,7 +228,7 @@ func Validation(field string, value interface{}, constraint, message string) err
 
 // NewValidationError creates a validation error with operation context.
 // This is a convenience function for backward compatibility.
-func NewValidationError(op, field string, value interface{}, message string) error {
+func NewValidationError(op, field string, value any, message string) error {
 	return &DocxError{
 		Code: ErrCodeValidation,
 		Op:   op,
@@ -242,7 +242,7 @@ func NewValidationError(op, field string, value interface{}, message string) err
 
 // NewNotFoundError creates a "not found" error.
 // This is a convenience function for backward compatibility.
-func NewNotFoundError(op, field string, value interface{}, message string) error {
+func NewNotFoundError(op, field string, value any, message string) error {
 	return &DocxError{
 		Code:    ErrCodeNotFound,
 		Op:      op,
@@ -251,7 +251,7 @@ func NewNotFoundError(op, field string, value interface{}, message string) error
 }
 
 // InvalidArgument creates a validation error for invalid arguments.
-func InvalidArgument(op, field string, value interface{}, message string) error {
+func InvalidArgument(op, field string, value any, message string) error {
 	return &DocxError{
 		Code: ErrCodeValidation,
 		Op:   op,

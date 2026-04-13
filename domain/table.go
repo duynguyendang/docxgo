@@ -36,6 +36,9 @@ type Table interface {
 	// AddRow adds a new row to the end of the table.
 	AddRow() (TableRow, error)
 
+	// AddColumn adds a new column (one cell to each row) to the table.
+	AddColumn() error
+
 	// InsertRow inserts a new row at the specified index.
 	InsertRow(index int) (TableRow, error)
 

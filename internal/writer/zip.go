@@ -607,7 +607,7 @@ func (zw *ZipWriter) writeDefaultWebSettings() error {
 }
 
 // writeXML marshals and writes an XML structure to the ZIP.
-func (zw *ZipWriter) writeXML(path string, v interface{}) error {
+func (zw *ZipWriter) writeXML(path string, v any) error {
 	w, err := zw.zipWriter.Create(path)
 	if err != nil {
 		return err

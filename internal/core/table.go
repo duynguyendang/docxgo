@@ -26,6 +26,8 @@ SOFTWARE.
 package core
 
 import (
+	"slices"
+
 	"github.com/duynguyendang/docxgo/v3/domain"
 	"github.com/duynguyendang/docxgo/v3/internal/manager"
 	"github.com/duynguyendang/docxgo/v3/pkg/constants"
@@ -80,9 +82,7 @@ func (t *table) Row(index int) (domain.TableRow, error) {
 
 // Rows returns all rows in the table.
 func (t *table) Rows() []domain.TableRow {
-	rows := make([]domain.TableRow, len(t.rows))
-	copy(rows, t.rows)
-	return rows
+	return slices.Clone(t.rows)
 }
 
 // AddRow adds a new row to the end of the table.
@@ -128,6 +128,21 @@ func (t *table) RowCount() int {
 // ColumnCount returns the number of columns in the table.
 func (t *table) ColumnCount() int {
 	return t.cols
+}
+
+// AddColumn adds a new cell to every row in the table.
+func (t *table) AddColumn() error {
+	for _, row := range t.rows {
+		tr, ok := row.(*tableRow)
+		if !ok {
+			return errors.InvalidState("Table.AddColumn", "unexpected row implementation type")
+		}
+		cellID := t.idGen.NextCellID()
+		cell := NewTableCell(tr, cellID, t.idGen, t.relManager, t.mediaManager)
+		tr.cells = append(tr.cells, cell)
+	}
+	t.cols++
+	return nil
 }
 
 // Width returns the table width.
@@ -215,9 +230,7 @@ func (r *tableRow) Cell(col int) (domain.TableCell, error) {
 
 // Cells returns all cells in this row.
 func (r *tableRow) Cells() []domain.TableCell {
-	cells := make([]domain.TableCell, len(r.cells))
-	copy(cells, r.cells)
-	return cells
+	return slices.Clone(r.cells)
 }
 
 // Height returns the row height.
@@ -282,9 +295,7 @@ func (c *tableCell) AddParagraph() (domain.Paragraph, error) {
 
 // Paragraphs returns all paragraphs in this cell.
 func (c *tableCell) Paragraphs() []domain.Paragraph {
-	paras := make([]domain.Paragraph, len(c.paragraphs))
-	copy(paras, c.paragraphs)
-	return paras
+	return slices.Clone(c.paragraphs)
 }
 
 // Width returns the cell width.
@@ -512,10 +523,7 @@ func (c *tableCell) AddTable(rows, cols int) (domain.Table, error) {
 
 // Tables returns all nested tables in this cell.
 func (c *tableCell) Tables() []domain.Table {
-	// Return a defensive copy
-	result := make([]domain.Table, len(c.tables))
-	copy(result, c.tables)
-	return result
+	return slices.Clone(c.tables)
 }
 
 // IsHorizontallyMergedContinuation reports whether this cell is hidden by a

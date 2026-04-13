@@ -263,7 +263,7 @@ func NewParagraphSerializer() *ParagraphSerializer {
 func (s *ParagraphSerializer) Serialize(para domain.Paragraph) *xml.Paragraph {
 	xmlPara := &xml.Paragraph{
 		Properties: s.serializeProperties(para),
-		Elements:   make([]interface{}, 0, len(para.Runs())+2),
+		Elements:   make([]any, 0, len(para.Runs())+2),
 	}
 
 	// Add bookmark if this paragraph has one (needed for TOC)
@@ -323,13 +323,13 @@ func (s *ParagraphSerializer) Serialize(para domain.Paragraph) *xml.Paragraph {
 	return xmlPara
 }
 
-func (s *ParagraphSerializer) expandRunWithNewlines(run domain.Run, text string) []interface{} {
+func (s *ParagraphSerializer) expandRunWithNewlines(run domain.Run, text string) []any {
 	parts := strings.Split(text, "\n")
 	if len(parts) == 0 {
-		return []interface{}{s.runSerializer.Serialize(run)}
+		return []any{s.runSerializer.Serialize(run)}
 	}
 
-	result := make([]interface{}, 0, len(parts)*2-1)
+	result := make([]any, 0, len(parts)*2-1)
 
 	var (
 		setter   func(string) error
@@ -376,8 +376,8 @@ func (s *ParagraphSerializer) expandRunWithNewlines(run domain.Run, text string)
 
 // expandRunWithFields expands a run containing fields into XML elements while preserving formatting.
 // The returned slice may include runs, hyperlinks, and field components.
-func (s *ParagraphSerializer) expandRunWithFields(run domain.Run, fields []domain.Field) []interface{} {
-	elements := make([]interface{}, 0, len(fields)*5)
+func (s *ParagraphSerializer) expandRunWithFields(run domain.Run, fields []domain.Field) []any {
+	elements := make([]any, 0, len(fields)*5)
 
 	for _, field := range fields {
 		wasDirty := false
@@ -895,7 +895,7 @@ func (s *TableSerializer) serializeCell(cell domain.TableCell) *xml.TableCell {
 	paragraphs := cell.Paragraphs()
 	tables := cell.Tables()
 
-	content := make([]interface{}, 0, len(paragraphs)+len(tables)+1)
+	content := make([]any, 0, len(paragraphs)+len(tables)+1)
 
 	for _, para := range paragraphs {
 		content = append(content, s.paraSerializer.Serialize(para))
@@ -1130,7 +1130,7 @@ func (s *DocumentSerializer) NextDrawingID() int {
 func (s *DocumentSerializer) SerializeBody(doc domain.Document) *xml.Body {
 	blocks := doc.Blocks()
 	body := &xml.Body{
-		Content: make([]interface{}, 0, len(blocks)),
+		Content: make([]any, 0, len(blocks)),
 	}
 
 	for _, block := range blocks {

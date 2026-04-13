@@ -102,7 +102,7 @@ type TableRowHeight struct {
 type TableCell struct {
 	XMLName    xml.Name             `xml:"w:tc"`
 	Properties *TableCellProperties `xml:"w:tcPr,omitempty"`
-	Content    []interface{}        `xml:",any"`
+	Content    []any        `xml:",any"`
 }
 
 // TableCellProperties represents w:tcPr element.

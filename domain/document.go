@@ -87,6 +87,11 @@ import "io"
 // Document represents a Word document (.docx file).
 // It provides methods to add content, manage structure, and persist to disk.
 type Document interface {
+	// AddHeading adds a heading paragraph with the specified text and level.
+	// level 0 uses the Title style; levels 1-9 use Heading1-Heading9.
+	// Returns an error if level is outside the range 0-9.
+	AddHeading(text string, level int) (Paragraph, error)
+
 	// AddParagraph adds a new paragraph to the document.
 	// Returns an error if the operation fails.
 	AddParagraph() (Paragraph, error)

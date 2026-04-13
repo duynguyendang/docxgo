@@ -106,8 +106,8 @@ type docOptions struct {
 	Title    string      `json:"title,omitempty"`
 	Author   string      `json:"author,omitempty"`
 	Subject  string      `json:"subject,omitempty"`
-	PageSize interface{} `json:"pageSize,omitempty"` // string or object
-	Margins  interface{} `json:"margins,omitempty"`  // string or object
+	PageSize any `json:"pageSize,omitempty"` // string or object
+	Margins  any `json:"margins,omitempty"`  // string or object
 	Theme    string      `json:"theme,omitempty"`
 }
 
@@ -268,8 +268,8 @@ type borderStyleDef struct {
 // sectionItem represents a section content item.
 type sectionItem struct {
 	Type        string                       `json:"type"`
-	PageSize    interface{}                  `json:"pageSize,omitempty"`    // string or object
-	Margins     interface{}                  `json:"margins,omitempty"`     // string or object
+	PageSize    any                  `json:"pageSize,omitempty"`    // string or object
+	Margins     any                  `json:"margins,omitempty"`     // string or object
 	Orientation string                       `json:"orientation,omitempty"` // "portrait" | "landscape"
 	Columns     int                          `json:"columns,omitempty"`
 	BreakType   string                       `json:"breakType,omitempty"` // "nextPage", "continuous", "evenPage", "oddPage"
@@ -376,7 +376,7 @@ func (s *server) handleOpen(req *Request) Response {
 	}
 
 	docID := s.storeDoc(doc)
-	return Response{ID: req.ID, Result: map[string]interface{}{
+	return Response{ID: req.ID, Result: map[string]any{
 		"documentId": docID,
 	}}
 }
@@ -426,12 +426,12 @@ func (s *server) handleValidate(req *Request) Response {
 	}
 
 	if err := doc.Validate(); err != nil {
-		return Response{ID: req.ID, Result: map[string]interface{}{
+		return Response{ID: req.ID, Result: map[string]any{
 			"valid":   false,
 			"message": err.Error(),
 		}}
 	}
-	return Response{ID: req.ID, Result: map[string]interface{}{
+	return Response{ID: req.ID, Result: map[string]any{
 		"valid": true,
 	}}
 }
@@ -464,14 +464,14 @@ func (s *server) handleInspect(req *Request) Response {
 		}
 	}
 
-	result := map[string]interface{}{
+	result := map[string]any{
 		"paragraphCount": len(paragraphs),
 		"tableCount":     len(tables),
 		"text":           texts,
 	}
 
 	if meta := doc.Metadata(); meta != nil {
-		result["metadata"] = map[string]interface{}{
+		result["metadata"] = map[string]any{
 			"title":       meta.Title,
 			"subject":     meta.Subject,
 			"creator":     meta.Creator,
@@ -521,7 +521,7 @@ func (s *server) handleSetMetadata(req *Request) Response {
 		return errorResponse(req.ID, errors.ErrCodeValidation, err.Error(), op)
 	}
 
-	return Response{ID: req.ID, Result: map[string]interface{}{"ok": true}}
+	return Response{ID: req.ID, Result: map[string]any{"ok": true}}
 }
 
 func (s *server) handleSetBackgroundColor(req *Request) Response {
@@ -551,7 +551,7 @@ func (s *server) handleSetBackgroundColor(req *Request) Response {
 		return errorResponse(req.ID, errors.ErrCodeValidation, err.Error(), op)
 	}
 
-	return Response{ID: req.ID, Result: map[string]interface{}{"ok": true}}
+	return Response{ID: req.ID, Result: map[string]any{"ok": true}}
 }
 
 func (s *server) handleClose(req *Request) Response {
@@ -575,7 +575,7 @@ func (s *server) handleClose(req *Request) Response {
 			fmt.Sprintf("document %q not found", params.DocumentID), op)
 	}
 
-	return Response{ID: req.ID, Result: map[string]interface{}{"ok": true}}
+	return Response{ID: req.ID, Result: map[string]any{"ok": true}}
 }
 
 // ─── Options application ──────────────────────────────────────────────────────
@@ -1035,7 +1035,7 @@ func applySection(doc domain.Document, item sectionItem) error {
 // ─── Serialization ───────────────────────────────────────────────────────────
 
 // serializeOutput serializes a document to the requested output format.
-func serializeOutput(doc domain.Document, output, filePath, docID string) (interface{}, *RPCError) {
+func serializeOutput(doc domain.Document, output, filePath, docID string) (any, *RPCError) {
 	switch output {
 	case "file":
 		if filePath == "" {
@@ -1047,7 +1047,7 @@ func serializeOutput(doc domain.Document, output, filePath, docID string) (inter
 		if err := doc.SaveAs(filePath); err != nil {
 			return nil, &RPCError{Code: errors.ErrCodeIO, Message: err.Error()}
 		}
-		return map[string]interface{}{
+		return map[string]any{
 			"filePath":   filePath,
 			"documentId": docID,
 		}, nil
@@ -1056,7 +1056,7 @@ func serializeOutput(doc domain.Document, output, filePath, docID string) (inter
 		if _, err := doc.WriteTo(&buf); err != nil {
 			return nil, &RPCError{Code: errors.ErrCodeIO, Message: err.Error()}
 		}
-		return map[string]interface{}{
+		return map[string]any{
 			"data":       base64.StdEncoding.EncodeToString(buf.Bytes()),
 			"documentId": docID,
 		}, nil
@@ -1301,7 +1301,7 @@ func parseTableWidth(w *tableWidthDef) domain.TableWidth {
 }
 
 // parsePageSize parses a page size from a string preset or {width,height} object.
-func parsePageSize(v interface{}) domain.PageSize {
+func parsePageSize(v any) domain.PageSize {
 	if v == nil {
 		return domain.PageSizeLetter
 	}
@@ -1319,7 +1319,7 @@ func parsePageSize(v interface{}) domain.PageSize {
 		case "TABLOID":
 			return domain.PageSizeTableid
 		}
-	case map[string]interface{}:
+	case map[string]any:
 		ps := domain.PageSize{}
 		if w, ok := toInt(t["width"]); ok {
 			ps.Width = w
@@ -1333,7 +1333,7 @@ func parsePageSize(v interface{}) domain.PageSize {
 }
 
 // parseMargins parses margins from a string preset or {top,bottom,left,right} object.
-func parseMargins(v interface{}) domain.Margins {
+func parseMargins(v any) domain.Margins {
 	if v == nil {
 		return domain.DefaultMargins
 	}
@@ -1347,7 +1347,7 @@ func parseMargins(v interface{}) domain.Margins {
 		case "wide":
 			return domain.Margins{Top: 1440, Bottom: 1440, Left: 2880, Right: 2880, Header: 720, Footer: 720}
 		}
-	case map[string]interface{}:
+	case map[string]any:
 		m := domain.DefaultMargins
 		if top, ok := toInt(t["top"]); ok {
 			m.Top = top
@@ -1373,7 +1373,7 @@ func parseMargins(v interface{}) domain.Margins {
 }
 
 // toInt converts various JSON numeric types to int.
-func toInt(v interface{}) (int, bool) {
+func toInt(v any) (int, bool) {
 	switch n := v.(type) {
 	case float64:
 		return int(n), true

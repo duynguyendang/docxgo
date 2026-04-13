@@ -43,7 +43,7 @@ type Document struct {
 // Body represents w:body element.
 type Body struct {
 	XMLName xml.Name           `xml:"w:body"`
-	Content []interface{}      `xml:",any"`
+	Content []any      `xml:",any"`
 	SectPr  *SectionProperties `xml:"w:sectPr,omitempty"`
 }
 
